@@ -4,45 +4,49 @@ import Badge from "@/components/Badge.astro"
 import LinkedInIcon from "@/components/icons/LinkedIn.astro"
 import MailIcon from "@/components/icons/Mail.astro"
 import SocialPill from "@/components/SocialPill.astro"
+import YoutubeInIcon from "@/components/icons/Youtube.astro"
 ---
 
 <div class="max-w-xl">
   <div class="flex gap-4 mb-4">
     <img
       class="rounded-full shadow-lg size-16"
-      src="/midudev.webp"
+      src="/me.webp"
       alt={personalImageAlt}
     />
     <a
-      href="https://linkedin.com/in/midudev"
+      href="https://www.linkedin.com/in/emilio-rodrigo-carreira-villalta-2a62aa250/"
       target="_blank"
       rel="noopener"
       class="flex items-center transition md:justify-center md:hover:scale-105"
     >
-      <Badge>Disponible para trabajar</Badge>
+      <Badge>Open To Work</Badge>
     </a>
   </div>
   <h1
     class="text-4xl font-bold tracking-tight text-gray-800 sm:text-5xl dark:text-white"
   >
-    Hey, soy midudev
+    Hey, I am Rodrigo Carreira
   </h1>
   <p
     class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-yellow-200 [&>strong]:text-yellow-500 [&>strong]:font-semibold dark:text-gray-300"
   >
-    +15 años de experiencia. <strong
-      >Ingeniero de Software y Creador de Contenido sobre Programación</strong
-    > de Barcelona, España 🇪🇸. Especializado en el desarrollo de aplicaciones web
-    únicas.
+    <strong
+      >Software & AI Engineer</strong
+    > from Málaga, Spain 🇪🇸. My primary area of expertise is in <strong>computer vision and natural language processing (NLP)</strong> technologies.
   </p>
   <nav class="flex flex-wrap gap-4 mt-8">
-    <SocialPill href="mailto:miduga@gmail.com">
+    <SocialPill href="mailto:ercarreira2@gmail.com">
       <MailIcon class="size-4" />
-      Contáctame
+      Contact Me
     </SocialPill>
-    <SocialPill href="https://linkedin.com/in/midudev">
+    <SocialPill href="https://www.linkedin.com/in/emilio-rodrigo-carreira-villalta-2a62aa250/">
       <LinkedInIcon class="size-4" />
       LinkedIn
+    </SocialPill>
+    <SocialPill href="https://www.youtube.com/@RodrigoCarreira3382">
+      <YoutubeInIcon class="size-4" />
+      Youtube
     </SocialPill>
   </nav>
 </div>
