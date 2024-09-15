@@ -40,7 +40,7 @@ const PROJECTS = [
 {
     title: "Image Descriptor for Visually Impaired",
     description: "A Python + Pytorch + Tensorflow app that uses YOLO for entity detection, MiDaS for depth mapping, and k-means for inferring weather and predominant color in an image. LangChain passes this data to an LLM, which generates an image description. The app is served via a Flask server and fully containerized with Docker.",
-    link: "https://adventjs.dev",
+    link: "https://github.com/rorro6787/img-desc-visually-impaired/blob/main/Project_Documentation.pdf",
     github: "https://github.com/rorro6787/img-desc-visually-impaired",
     image: "/projects/impaired.webp",
     tags: [TAGS.PYTORCH, TAGS.YOLO],
@@ -48,7 +48,7 @@ const PROJECTS = [
   {
     title: "Maliocious Mail Detector using Llama2", 
     description: "A Pytorch system capable of detecting malicious emails with exceptional precision using a fine-tunned Llama2 model. The app is served via a Flask server and fully containerized with Docker.",
-    link: "https://svgl.vercel.app/",
+    link: "https://github.com/rorro6787/malicious-mail-detector/blob/main/Project_Documentation.pdf",
     github: "https://github.com/rorro6787/malicious-mail-detector",
     image: "/projects/resBueno.webp",
     tags: [TAGS.PYTORCH, TAGS.HUGGINGFACE],
@@ -56,7 +56,7 @@ const PROJECTS = [
   {
     title: "Rock Paper Scissors Image Tracker",
     description: "Python implementation that trains a computer vision model using YOLOv8 to detect hands in the shapes of rock, paper, or scissors. The system determines the outcome of the game. It covers everything from dataset generation to model training",
-    link: "https://adventjs.dev",
+    link: "https://github.com/rorro6787/ImageTracking/blob/gamma/Image_Tracking_YOLO.pdf",
     github: "https://github.com/rorro6787/ImageTracking",
     image: "/projects/game.webp",
     tags: [TAGS.PYTORCH, TAGS.YOLO],
@@ -64,7 +64,7 @@ const PROJECTS = [
   {
     title: "My Neural Network from Scratch",
     description: "Python implementation of a neural network that covers basic concepts such as forward propagation, backpropagation, and training using gradient descent. Basic Python is used without libraries like TensorFlow or PyTorch.",
-    link: "https://svgl.vercel.app/",
+    link: "https://github.com/rorro6787/NeuralNetwork/blob/main/Neural_Network_Python.pdf",
     github: "https://github.com/rorro6787/NeuralNetwork",
     image: "/projects/network.webp",
     tags: [TAGS.PYTHON, TAGS.NUMPY],
@@ -107,6 +107,12 @@ const PROJECTS = [
               <GitHub class="size-6" />
               Code
               
+            </LinkButton>
+            )}
+          {link && (
+            <LinkButton href={link}>
+              <Link class="size-4" />
+              Docs
             </LinkButton>
           )}
         </footer>
