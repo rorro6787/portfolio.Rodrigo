@@ -34,18 +34,18 @@ const { title, company, link, information, date } = Astro.props
   </div>
   <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 md:col-span-2">
     <footer class="flex items-end justify-start gap-x-4">
-        {information && (
-            <LinkButton href={information}>
-              <GitHub class="size-5" />
-              Certificate
-            </LinkButton>
-          )}
-        {link && (
-          <LinkButton href={link}>
-            <Link class="size-4" />
-            Information
-          </LinkButton>
-        )}  
+      {information && (
+        <LinkButton href={information}>
+          <Link class="size-5" />
+          Information 
+        </LinkButton>
+      )}
+    {link && (
+      <LinkButton href={link}>
+        <GitHub class="size-4" />
+        Certificate
+      </LinkButton>
+    )}   
       </footer>
   </div>
 </div>
