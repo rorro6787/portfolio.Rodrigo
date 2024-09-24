@@ -12,6 +12,9 @@ import Hero from "@/components/Hero.astro"
 import TitleSection from "@/components/TitleSection.astro"
 import Education from "@/components/Education.astro"
 import GitHub from "@/components/icons/GitHub.astro"
+import Certifications from "@/components/Certifications.astro"
+import LinkButton from "@/components/LinkButton.astro"
+import Code from "@/components/icons/Code.astro"
 // import SvgEducation from "@/components/icons/Education.astro"
 ---
 
@@ -45,9 +48,17 @@ import GitHub from "@/components/icons/GitHub.astro"
     <SectionContainer id="educacion">
       <TitleSection>
         <GitHub class="size-7" />
-        Education & Certifications
+        Education
       </TitleSection>
       <Education />
+    </SectionContainer>
+
+    <SectionContainer id="educacion">
+      <TitleSection>
+        <Code class="size-7" />
+        Technical Certifications
+      </TitleSection>
+      <Certifications />
     </SectionContainer>
     
     <SectionContainer id="sobre-mi">

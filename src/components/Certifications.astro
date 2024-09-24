@@ -1,0 +1,88 @@
+---
+import CertificationsItem from "./CertificationsItem.astro"
+import GitHub from "./icons/GitHub.astro"
+const EXPERIENCE = [
+  {
+    date: "August 2024",
+    title: "Efficient Large Language Model (LLM) Customization",
+    company: "Nvidia DLI",
+    link: "https://learn.nvidia.com/certificates?id=zsC9V4AyQXesN06iAhXuYQ#",
+    information: "https://github.com/rorro6787/rorro6787/blob/main/Images/diplomas%2BCVs/nvidia_certificate_competency_Efficient_LLM_Customization.png",
+  },
+  {
+    date: "July 2024",
+    title: "Oracle Cloud Infrastructure 2024 Generative AI Certified Professional",
+    company: "Oracle",
+    link: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=130721E56723A82F8CF93EE1299EB51B5C34D97EA7BE31F6A3938A7482389037",
+    information: "https://github.com/rorro6787/rorro6787/blob/main/Images/diplomas%2BCVs/CertificateProfessional.pdf",
+  },
+  {
+    date: "July 2024",
+    title: "Oracle Guided Learning Content Developer Certified Foundations Associate",
+    company: "Oracle",
+    link: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=F09397A2CCA0CCE103FD6E5FD4871757D1B8514D64F6CB652E6FC8BE30D753B8",
+  },
+  {
+    date: "July 2024",
+    title: "Oracle Guided Learning Project Management Foundations Associate",
+    company: "Oracle",
+    link: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=DCC06D1FE4C8D1E31A9756A7C47E22F6EFBCFAA116AF1FD0DCB9836D8E04410B",
+  },
+  {
+    date: "July 2024",
+    title: "Rapid Application Development with Large Language Models (LLMs)",
+    company: "Nvidia DLI",
+    link: "https://learn.nvidia.com/certificates?id=bqNe6vAJSPGOZKYifg4YpQ",
+    information: "https://github.com/rorro6787/rorro6787/blob/main/Images/diplomas%2BCVs/nvidia_certificate_competency_application_development_with_LLMs.pdf",
+  },
+  {
+    date: "March 2024",
+    title: "Building Transformer-Based Natural Language Processing Applications",
+    company: "Nvidia DLI",
+    link: "https://courses.nvidia.com/certificates/41b0cdb2f9714217aa7f65d4f23f8fc3/",
+    information: "https://github.com/rorro6787/rorro6787/blob/main/Images/diplomas%2BCVs/nvidia_certificate_competency_building_transformers_neural_networks.pdf",
+  },
+  {
+    date: "November 2023",
+    title: "Fundamentals of Deep Learning",
+    company: "Nvidia DLI",
+    link: "https://courses.nvidia.com/certificates/ab163f0f315946509a663944a01e37e2/",
+    information: "https://github.com/rorro6787/rorro6787/blob/main/Images/diplomas%2BCVs/nvidia_certificate_competency_fundamentals_deep_learning.pdf",
+  },
+  {
+    date: "October 2023",
+    title: "Fundamentals of Accelerated Computing with CUDA C/C++",
+    company: "Nvidia DLI",
+    link: "https://courses.nvidia.com/certificates/24256f061e75432899a9f7db2f0edebf/",
+    information: "https://github.com/rorro6787/rorro6787/blob/main/Images/diplomas%2BCVs/nvidia_certificate_competency_fundamentals_accelerated_computing.pdf",
+  },
+  {
+    date: "August 2023",
+    title: "Git: ¡de Noob a Pro!",
+    company: "Mastermind",
+    link: "https://mastermind.ac/certificates/b6a0dc594c9a4193aec061c398ae4a87",
+  },
+  {
+    date: "May 2023",
+    title: "Aprende a programar con Python",
+    company: "Mastermind",
+    link: "https://mastermind.ac/certificates/29bc709927a348e6bad0958ae8959088",
+  },
+  {
+    date: "November 2022",
+    title: "Aprende a usar bien Microsoft Word",
+    company: "Udemy",
+    link: "https://www.udemy.com/certificate/UC-477f01b1-4984-466c-b27b-45eda7ed0c72/",
+  },
+]
+---
+
+<ol class="relative mt-16">
+  {
+    EXPERIENCE.map((experience) => (
+      <li class="">
+        <CertificationsItem {...experience} />
+      </li>
+    ))
+  }
+</ol>
