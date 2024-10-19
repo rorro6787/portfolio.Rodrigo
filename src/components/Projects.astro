@@ -1,5 +1,7 @@
 ---
 import GitHub from "./icons/GitHub.astro"
+import ORACLE from "./icons/Oracle.astro"
+import MAIL from "./icons/System.astro"
 import Pytorch from "./icons/Pytorch.astro"
 import Python from "./icons/Python.astro"
 import Link from "./icons/Link.astro"
@@ -7,8 +9,20 @@ import LinkButton from "./LinkButton.astro"
 import Numpy from "./icons/Numpy.astro"
 import Yolo from "./icons/Yolo.astro"
 import HuggingFace from "./icons/HuggingFace.astro"
+import Next from "./icons/Next.astro"
+import type { preview } from "astro"
 
 const TAGS = {
+  Oracle: {
+    name: "Oracle Cloud Infrastucture",
+    class: "bg-[#003159] text-white",
+    icon: ORACLE,
+  },
+  Next: {
+    name: "React & Next.js",
+    class: "bg-[#003159] text-white",
+    icon: Next,
+  },
   PYTHON: {
     name: "Python",
     class: "bg-[#003159] text-white",
@@ -37,13 +51,13 @@ const TAGS = {
 }
 
 const PROJECTS = [
-{
-    title: "Image Descriptor for Visually Impaired",
-    description: "A Python + Pytorch + Tensorflow app that uses YOLO for entity detection, MiDaS for depth mapping, and k-means for inferring weather and predominant color in an image. LangChain passes this data to an LLM, which generates an image description. The app is served via a Flask server and fully containerized with Docker.",
-    link: "https://github.com/rorro6787/img-desc-visually-impaired/blob/main/Project_Documentation.pdf",
-    github: "https://github.com/rorro6787/img-desc-visually-impaired",
-    image: "/projects/impaired.webp",
-    tags: [TAGS.PYTORCH, TAGS.YOLO],
+  {
+    title: "OCI Powered Intelligent Water Dam-Monitoring Application",
+    description: "This project leverages Oracle Cloud to provide historical data and 5-year water level predictions for Spanish dams. It includes a React/Next.js frontend, a Python Flask server with an ARIMA model, and security features like reCAPTCHA and TLS.",
+    preview: "https://hackaton-knkj.vercel.app/",
+    github: "https://github.com/rorro6787/OCI-Powered-Intelligent-Water-Dam-Monitoring-Application/tree/delta",
+    image: "/projects/dams.webp",
+    tags: [TAGS.Oracle, TAGS.PYTHON, TAGS.Next],
   },
   {
     title: "Maliocious Mail Detector using Llama2", 
@@ -62,6 +76,14 @@ const PROJECTS = [
     tags: [TAGS.PYTORCH, TAGS.YOLO],
   },
   {
+    title: "Image Descriptor for Visually Impaired",
+    description: "A Python + Pytorch + Tensorflow app that uses YOLO for entity detection, MiDaS for depth mapping, and k-means for inferring weather and predominant color in an image. LangChain passes this data to an LLM, which generates an image description. The app is served via a Flask server and fully containerized with Docker.",
+    link: "https://github.com/rorro6787/img-desc-visually-impaired/blob/main/Project_Documentation.pdf",
+    github: "https://github.com/rorro6787/img-desc-visually-impaired",
+    image: "/projects/impaired.webp",
+    tags: [TAGS.PYTORCH, TAGS.YOLO],
+  },
+  {
     title: "My Neural Network from Scratch",
     description: "Python implementation of a neural network that covers basic concepts such as forward propagation, backpropagation, and training using gradient descent. Basic Python is used without libraries like TensorFlow or PyTorch.",
     link: "https://github.com/rorro6787/NeuralNetwork/blob/main/Neural_Network_Python.pdf",
@@ -74,7 +96,7 @@ const PROJECTS = [
 
 <div class="flex flex-col gap-y-16">
   {
-    PROJECTS.map(({ image, title, description, tags, link, github }) => (
+    PROJECTS.map(({ image, title, description, tags, link, github, preview }) => (
     <article class="flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0">
   <div class="w-full md:w-1/2">
     <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
@@ -93,7 +115,7 @@ const PROJECTS = [
               <span
                 class={`flex gap-x-2 rounded-full text-xs ${tag.class} py-1 px-2 `}
               >
-                <tag.icon class="size-4" />
+                <tag.icon class="size-6" />
                 {tag.name}
               </span>
             </li>
@@ -109,9 +131,16 @@ const PROJECTS = [
               
             </LinkButton>
             )}
+          {preview && (
+            <LinkButton href={preview}>
+              <MAIL class="size-6" />
+              Preview
+              
+            </LinkButton>
+            )}
           {link && (
             <LinkButton href={link}>
-              <Link class="size-4" />
+              <Link class="size-6" />
               Docs
             </LinkButton>
           )}
