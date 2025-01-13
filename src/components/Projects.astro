@@ -10,6 +10,7 @@ import Numpy from "./icons/Numpy.astro"
 import Yolo from "./icons/Yolo.astro"
 import HuggingFace from "./icons/HuggingFace.astro"
 import Next from "./icons/Next.astro"
+import Pandas from "./icons/Pandas.astro"
 import type { preview } from "astro"
 
 const TAGS = {
@@ -48,49 +49,23 @@ const TAGS = {
     class: "bg-[#003159] text-White",
     icon: HuggingFace,
   },
+  PANDAS: {
+    name: "Pandas",
+    class: "bg-[#0077B6] text-White",
+    icon: Pandas,
+  },
 }
 
 const PROJECTS = [
-  {
-    title: "OCI Powered Intelligent Water Dam-Monitoring Application",
-    description: "This project leverages Oracle Cloud to provide historical data and 5-year water level predictions for Spanish dams. It includes a React/Next.js frontend, a Python Flask server with an ARIMA model, and security features like reCAPTCHA and TLS.",
-    preview: "https://hackaton-knkj.vercel.app/",
-    github: "https://github.com/rorro6787/OCI-Powered-Intelligent-Water-Dam-Monitoring-Application",
-    image: "/projects/dams.webp",
-    tags: [TAGS.Oracle, TAGS.PYTHON, TAGS.Next],
+{
+    title: "SAES",
+    description: "SAES is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. It includes  statistical tests (Friedman, Wilcoxon, Nemenyi), data visualization tools (boxplots, critical distance plots) and automatic LaTeX report generation.",
+    link: "https://rorro6787.github.io/SAES/",
+    github: "https://github.com/rorro6787/SAES",
+    image: "/projects/SAES_logo.png",
+    tags: [TAGS.PYTHON, TAGS.PANDAS],
   },
-  {
-    title: "Maliocious Mail Detector using Llama2", 
-    description: "A Pytorch system capable of detecting malicious emails with exceptional precision using a fine-tunned Llama2 model. The app is served via a Flask server and fully containerized with Docker.",
-    link: "https://github.com/rorro6787/malicious-mail-detector/blob/main/Project_Documentation.pdf",
-    github: "https://github.com/rorro6787/malicious-mail-detector",
-    image: "/projects/resBueno.webp",
-    tags: [TAGS.PYTORCH, TAGS.HUGGINGFACE],
-  },
-  {
-    title: "Rock Paper Scissors Image Tracker",
-    description: "Python implementation that trains a computer vision model using YOLOv8 to detect hands in the shapes of rock, paper, or scissors. The system determines the outcome of the game. It covers everything from dataset generation to model training",
-    link: "https://github.com/rorro6787/ImageTracking/blob/gamma/Image_Tracking_YOLO.pdf",
-    github: "https://github.com/rorro6787/ImageTracking",
-    image: "/projects/game.webp",
-    tags: [TAGS.PYTORCH, TAGS.YOLO],
-  },
-  {
-    title: "Image Descriptor for Visually Impaired",
-    description: "A Python + Pytorch + Tensorflow app that uses YOLO for entity detection, MiDaS for depth mapping, and k-means for inferring weather and predominant color in an image. LangChain passes this data to an LLM, which generates an image description. The app is served via a Flask server and fully containerized with Docker.",
-    link: "https://github.com/rorro6787/img-desc-visually-impaired/blob/main/Project_Documentation.pdf",
-    github: "https://github.com/rorro6787/img-desc-visually-impaired",
-    image: "/projects/impaired.webp",
-    tags: [TAGS.PYTORCH, TAGS.YOLO],
-  },
-  {
-    title: "My Neural Network from Scratch",
-    description: "Python implementation of a neural network that covers basic concepts such as forward propagation, backpropagation, and training using gradient descent. Basic Python is used without libraries like TensorFlow or PyTorch.",
-    link: "https://github.com/rorro6787/NeuralNetwork/blob/main/Neural_Network_Python.pdf",
-    github: "https://github.com/rorro6787/NeuralNetwork",
-    image: "/projects/network.webp",
-    tags: [TAGS.PYTHON, TAGS.NUMPY],
-  },
+  
 ]
 ---
 
