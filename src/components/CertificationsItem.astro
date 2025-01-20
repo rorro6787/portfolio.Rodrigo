@@ -6,6 +6,7 @@ import Link from "./icons/Link.astro"
 import { info } from "node_modules/astro/dist/core/logger/core"
 import { Code } from "astro:components"
 import CodeIcon from "@/components/icons/Code.astro"
+import MAIL from "./icons/System.astro"
 
 interface Props {
   title: string
@@ -34,18 +35,19 @@ const { title, company, link, information, date } = Astro.props
   </div>
   <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 md:col-span-2">
     <footer class="flex items-end justify-start gap-x-4">
+      {link && (
+        <LinkButton href={link}>
+          <MAIL class="size-6" />
+          Certificate
+        </LinkButton>
+      )}   
       {information && (
         <LinkButton href={information}>
           <Link class="size-6" />
           Information 
         </LinkButton>
       )}
-    {link && (
-      <LinkButton href={link}>
-        <GitHub class="size-6" />
-        Certificate
-      </LinkButton>
-    )}   
+    
       </footer>
   </div>
 </div>

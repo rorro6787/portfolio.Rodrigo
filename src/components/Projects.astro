@@ -11,7 +11,7 @@ import Yolo from "./icons/Yolo.astro"
 import HuggingFace from "./icons/HuggingFace.astro"
 import Next from "./icons/Next.astro"
 import Pandas from "./icons/Pandas.astro"
-import type { preview } from "astro"
+import { preview } from "astro"
 
 const TAGS = {
   Oracle: {
@@ -62,6 +62,7 @@ const PROJECTS = [
     description: "SAES is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. It includes  statistical tests (Friedman, Wilcoxon, Nemenyi), data visualization tools (boxplots, critical distance plots) and automatic LaTeX report generation.",
     link: "https://jMetal.github.io/SAES/",
     github: "https://github.com/jMetal/SAES",
+    preview: "https://pypi.org/project/SAES/",
     image: "/projects/SAES_logo.png",
     tags: [TAGS.PYTHON, TAGS.PANDAS],
   },
@@ -72,8 +73,8 @@ const PROJECTS = [
 
 <div class="flex flex-col gap-y-16">
   {
-    // PROJECTS.map(({ image, title, description, tags, link, github, preview }) => (
-    PROJECTS.map(({ image, title, description, tags, link, github }) => (
+    PROJECTS.map(({ image, title, description, tags, link, github, preview }) => (
+    //PROJECTS.map(({ image, title, description, tags, link, github }) => (
     <article class="flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0">
   <div class="w-full md:w-1/2">
     <div class="relative flex flex-col items-center col-span-6 row-span-5 gap-8 transition duration-500 ease-in-out transform shadow-xl overflow-clip rounded-xl sm:rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50">
@@ -115,6 +116,13 @@ const PROJECTS = [
               Docs
             </LinkButton>
           )}
+          {preview && (
+            <LinkButton href={preview}>
+              <MAIL class="size-6" />
+              PYPI
+              
+            </LinkButton>
+            )}
         </footer>
     </div>
   </div>
