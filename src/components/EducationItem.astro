@@ -8,6 +8,7 @@ import { Code } from "astro:components"
 import CodeIcon from "@/components/icons/Code.astro"
 import Mail from "./icons/Mail.astro"
 import MAIL from "./icons/System.astro"
+import DIPLOMA from "./icons/diploma.astro"
 
 
 interface Props {
@@ -39,8 +40,8 @@ const { title, company, link, information, date } = Astro.props
     <footer class="flex items-end justify-start gap-x-4">
       {link && (
         <LinkButton href={link}>
-          <MAIL class="size-6" />
-          Diploma
+          <DIPLOMA class="size-6" />
+          Certification
         </LinkButton>
       )}  
 
