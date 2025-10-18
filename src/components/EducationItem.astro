@@ -23,35 +23,146 @@ const { title, company, link, information, date } = Astro.props
 ---
 
 <div
-  class="relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-black/20 dark:before:border-white/15 before:content-[''] md:grid-cols-5 md:gap-10 md:space-x-4]"
+  class="education-item relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-green-400/30 dark:before:border-green-400/20 before:content-[''] md:grid-cols-1 md:gap-10 md:space-x-4]"
 >
-  <div class="relative md:col-span-3">
-    <div class="sticky top-0">
-      <span class="text-green-400 -left-[42px] absolute rounded-full text-5xl"
-        >&bull;</span
-      >
+  <div class="relative">
+    <div class="education-header">
+      <div class="education-dot-wrapper -left-[48px] absolute">
+        <span class="education-dot inline-block w-6 h-6 rounded-full bg-green-400 border-4 border-gray-50 dark:border-gray-950 shadow-lg shadow-green-400/50"></span>
+      </div>
 
-      <h3 class="text-xl font-bold text-green-400">{title}</h3>
-      <h4 class="font-semibold text-xl text-gray-600 dark:text-white">{company}</h4>
-      <time class="p-0 m-0 text-sm text-gray-600/80 dark:text-white/80">{date}</time>
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-6 rounded-lg border-l-4 border-green-400 shadow-md hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300 hover:translate-x-2">
+        <div class="flex items-start gap-3 mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500 dark:text-green-400 flex-shrink-0 mt-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
+            <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
+          </svg>
+          <div>
+            <h3 class="text-xl font-bold text-green-500 dark:text-green-400 mb-2">{title}</h3>
+            <h4 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M3 21l18 0" />
+                <path d="M5 21v-14l8 -4v18" />
+                <path d="M19 21v-10l-6 -4" />
+                <path d="M9 9l0 .01" />
+                <path d="M9 12l0 .01" />
+                <path d="M9 15l0 .01" />
+                <path d="M9 18l0 .01" />
+              </svg>
+              {company}
+            </h4>
+            <time class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                <path d="M12 7v5l3 3" />
+              </svg>
+              {date}
+            </time>
+          </div>
+        </div>
+        
+        {(link || information) && (
+          <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-green-200 dark:border-green-800/30">
+            {link && (
+              <LinkButton href={link}>
+                <DIPLOMA class="size-5" />
+                View Certificate
+              </LinkButton>
+            )}  
+            {information && (
+              <LinkButton href={information}>
+                <Link class="size-5" />
+                More Info
+              </LinkButton>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   </div>
-  <div class="relative flex flex-col gap-2 pb-4 text-gray-600 dark:text-gray-300 md:col-span-2">
-    <footer class="flex items-end justify-start gap-x-4">
-      {link && (
-        <LinkButton href={link}>
-          <DIPLOMA class="size-6" />
-          Certification
-        </LinkButton>
-      )}  
-
-      
-        {information && (
-            <LinkButton href={information}>
-              <Link class="size-6" />
-              Information 
-            </LinkButton>
-          )}
-      </footer>
-  </div>
 </div>
+
+<style>
+  .education-item {
+    opacity: 0;
+    animation: fadeInLeft 0.7s ease-out forwards;
+  }
+
+  .education-header {
+    animation: slideInLeft 0.8s ease-out forwards;
+    animation-delay: 0.1s;
+    opacity: 0;
+  }
+
+  .education-dot {
+    animation: scaleIn 0.5s ease-out forwards, float 3s ease-in-out infinite;
+    animation-delay: 0.3s, 0.8s;
+    transform: scale(0);
+  }
+
+
+  @keyframes fadeInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: scale(1) translateY(0);
+    }
+    50% {
+      transform: scale(1.05) translateY(-3px);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>

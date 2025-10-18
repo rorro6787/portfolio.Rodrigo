@@ -3,8 +3,14 @@ import EducationItem from "./EducationItem.astro"
 import GitHub from "./icons/GitHub.astro"
 const EXPERIENCE = [
   {
+    date: "October 2025 - Ongoing",
+    title: "Master's degree in Artifical Intelligence (MSc)",
+    company: "UNIR - Rioja's International University",
+    information: "https://www.unir.net/ingenieria/master-inteligencia-artificial/",
+  },
+  {
     date: "Sept. 2021 - July 2025",
-    title: "Bachelor's Degree in Software Engineering",
+    title: "Bachelor's Degree Software Engineering (B.Sc)",
     company: "Málaga University (UMA)",
     information: "https://www.uma.es/grado-en-ingenieria-informatica",
   },
@@ -16,7 +22,7 @@ const EXPERIENCE = [
     link: "https://raw.githubusercontent.com/rorro6787/rorro6787/main/Images/diplomaC2.jpeg",
   },
   {
-    date: "June 2021",
+    date: "Sept. 2019 - June 2021",
     title: "Scientific Baccalaureate",
     company: "Novaschool Añoreta",
     information: "https://anoreta.novaschool.es/",
@@ -24,12 +30,30 @@ const EXPERIENCE = [
 ]
 ---
 
-<ol class="relative mt-16">
+<ol class="relative mt-16 education-list">
   {
-    EXPERIENCE.map((experience) => (
-      <li class="">
+    EXPERIENCE.map((experience, index) => (
+      <li class="education-list-item" style={`animation-delay: ${index * 0.15}s`}>
         <EducationItem {...experience} />
       </li>
     ))
   }
 </ol>
+
+<style>
+  .education-list-item {
+    opacity: 0;
+    animation: fadeInItem 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInItem {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>

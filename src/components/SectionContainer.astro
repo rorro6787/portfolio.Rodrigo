@@ -5,7 +5,46 @@ const { class: className, id } = Astro.props
 <section
   id={id}
   data-section={id}
-  class={`section ${className} scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl`}
+  class={`section section-animated ${className} scroll-m-20 w-full mx-auto container lg:max-w-4xl md:max-w-2xl`}
 >
   <slot />
 </section>
+
+<style>
+  .section-animated {
+    opacity: 0;
+    animation: fadeInSection 1s ease-out forwards;
+  }
+
+  /* Stagger sections based on their position */
+  .section-animated:nth-of-type(1) {
+    animation-delay: 0.1s;
+  }
+
+  .section-animated:nth-of-type(2) {
+    animation-delay: 0.2s;
+  }
+
+  .section-animated:nth-of-type(3) {
+    animation-delay: 0.3s;
+  }
+
+  .section-animated:nth-of-type(4) {
+    animation-delay: 0.4s;
+  }
+
+  .section-animated:nth-of-type(5) {
+    animation-delay: 0.5s;
+  }
+
+  @keyframes fadeInSection {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

@@ -101,12 +101,30 @@ const EXPERIENCE = [
 ]
 ---
 
-<ol class="relative mt-16">
+<ol class="relative mt-16 certifications-list">
   {
-    EXPERIENCE.map((experience) => (
-      <li class="">
+    EXPERIENCE.map((experience, index) => (
+      <li class="certifications-list-item" style={`animation-delay: ${index * 0.1}s`}>
         <CertificationsItem {...experience} />
       </li>
     ))
   }
 </ol>
+
+<style>
+  .certifications-list-item {
+    opacity: 0;
+    animation: fadeInItem 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeInItem {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+</style>

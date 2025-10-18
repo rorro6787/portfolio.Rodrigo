@@ -8,10 +8,10 @@ import YoutubeInIcon from "@/components/icons/Youtube.astro"
 import GithubIcon from "@/components/icons/GitHub.astro"
 ---
 
-<div class="max-w-xl">
-  <div class="flex gap-4 mb-4">
+<div class="max-w-xl hero-container">
+  <div class="flex gap-4 mb-4 hero-header">
     <img
-      class="rounded-full shadow-lg size-16"
+      class="rounded-full shadow-lg size-16 hero-image"
       src="/me.png"
       alt={personalImageAlt}
     />
@@ -19,7 +19,7 @@ import GithubIcon from "@/components/icons/GitHub.astro"
       href="https://www.linkedin.com/in/emilio-rodrigo-carreira-villalta-2a62aa250/"
       target="_blank"
       rel="noopener"
-      class="flex items-center transition md:justify-center md:hover:scale-105"
+      class="flex items-center transition md:justify-center md:hover:scale-105 hero-badge"
     >
       <!--
       <Badge>Open To Work</Badge>
@@ -28,18 +28,18 @@ import GithubIcon from "@/components/icons/GitHub.astro"
     </a>
   </div>
   <h1
-    class="text-4xl font-bold tracking-tight text-gray-800 sm:text-5xl dark:text-white"
+    class="text-4xl font-bold tracking-tight text-gray-800 sm:text-5xl dark:text-white hero-title"
   >
     Hey, I am Rodrigo Carreira
   </h1>
   <p
-    class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-yellow-200 [&>strong]:text-yellow-500 [&>strong]:font-semibold dark:text-gray-300"
+    class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-yellow-200 [&>strong]:text-yellow-500 [&>strong]:font-semibold dark:text-gray-300 hero-description"
   >
     <strong
       >Software & AI Engineer</strong
     > from Málaga, Spain 🇪🇸 and I am a <strong>Specialist</strong> in implementing <strong>AI</strong> and <strong>Generative AI</strong> pipelines tailored to business needs.
   </p>
-  <nav class="flex flex-wrap gap-4 mt-8">
+  <nav class="flex flex-wrap gap-4 mt-8 hero-social">
     <SocialPill href="mailto:ercarreira2@gmail.com">
       <MailIcon class="size-5" />
       Contact Me
@@ -58,3 +58,109 @@ import GithubIcon from "@/components/icons/GitHub.astro"
     </SocialPill>
   </nav>
 </div>
+
+<style>
+  .hero-container {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+
+  .hero-header {
+    opacity: 0;
+    animation: slideDown 0.6s ease-out forwards;
+    animation-delay: 0.2s;
+  }
+
+  .hero-image {
+    animation: rotate360 1s ease-out;
+    animation-delay: 0.3s;
+  }
+
+  .hero-badge {
+    opacity: 0;
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    animation-delay: 0.5s;
+  }
+
+  .hero-title {
+    opacity: 0;
+    animation: slideInLeft 0.8s ease-out forwards;
+    animation-delay: 0.4s;
+  }
+
+  .hero-description {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.6s;
+  }
+
+  .hero-social {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+    animation-delay: 0.8s;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes bounceIn {
+    from {
+      opacity: 0;
+      transform: scale(0.3) rotate(-10deg);
+    }
+    50% {
+      transform: scale(1.05) rotate(3deg);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+    }
+  }
+
+  @keyframes rotate360 {
+    from {
+      transform: rotate(0deg) scale(0.8);
+    }
+    to {
+      transform: rotate(360deg) scale(1);
+    }
+  }
+</style>
