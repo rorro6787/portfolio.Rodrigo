@@ -1,14 +1,4 @@
 ---
-import LinkInline from "./LinkInline.astro"
-import GitHub from "./icons/GitHub.astro"
-import LinkButton from "./LinkButton.astro"
-import Link from "./icons/Link.astro"
-import { info } from "node_modules/astro/dist/core/logger/core"
-import { Code } from "astro:components"
-import CodeIcon from "@/components/icons/Code.astro"
-import Mail from "./icons/Mail.astro"
-import MAIL from "./icons/System.astro"
-import DIPLOMA from "./icons/diploma.astro"
 
 
 interface Props {
@@ -20,18 +10,35 @@ interface Props {
 }
 
 const { title, company, link, information, date } = Astro.props
+const isOngoing = date.toLowerCase().includes('ongoing')
 ---
 
 <div
-  class="education-item relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:border-green-400/30 dark:before:border-green-400/20 before:content-[''] md:grid-cols-1 md:gap-10 md:space-x-4]"
+  class:list={[
+    "education-item relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:content-[''] md:grid-cols-1 md:gap-10 md:space-x-4]",
+    isOngoing ? "before:border-green-400/60 dark:before:border-green-400/50" : "before:border-green-400/30 dark:before:border-green-400/20"
+  ]}
 >
   <div class="relative">
     <div class="education-header">
       <div class="education-dot-wrapper -left-[48px] absolute">
-        <span class="education-dot inline-block w-6 h-6 rounded-full bg-green-400 border-4 border-gray-50 dark:border-gray-950 shadow-lg shadow-green-400/50"></span>
+        <span class:list={[
+          "education-dot inline-block w-6 h-6 rounded-full border-4 border-gray-50 dark:border-gray-950 shadow-lg",
+          isOngoing ? "bg-green-400 shadow-green-400/70 animate-pulse-ring" : "bg-green-400 shadow-green-400/50"
+        ]}></span>
       </div>
 
-      <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-6 rounded-lg border-l-4 border-green-400 shadow-md hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300 hover:translate-x-2">
+      <a 
+        href={link || information || '#'}
+        target="_blank"
+        rel="noopener noreferrer"
+        class:list={[
+          "block p-6 rounded-lg transition-all duration-300 cursor-pointer",
+          isOngoing 
+            ? "bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 border-l-4 border-green-400 shadow-xl hover:shadow-2xl hover:shadow-green-500/40 hover:translate-x-2 ring-2 ring-green-400/30" 
+            : "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-l-4 border-green-400 shadow-md hover:shadow-xl hover:shadow-green-500/20 hover:translate-x-2"
+        ]}
+      >
         <div class="flex items-start gap-3 mb-3">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500 dark:text-green-400 flex-shrink-0 mt-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
             <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -39,7 +46,10 @@ const { title, company, link, information, date } = Astro.props
             <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
           </svg>
           <div>
-            <h3 class="text-xl font-bold text-green-500 dark:text-green-400 mb-2">{title}</h3>
+            <h3 class:list={[
+              "text-xl font-bold mb-2",
+              isOngoing ? "text-green-500 dark:text-green-400 animate-shimmer-green bg-gradient-to-r from-green-500 via-green-400 to-green-500 bg-clip-text text-transparent bg-[length:200%_100%]" : "text-green-500 dark:text-green-400"
+            ]}>{title}</h3>
             <h4 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
@@ -53,7 +63,12 @@ const { title, company, link, information, date } = Astro.props
               </svg>
               {company}
             </h4>
-            <time class="inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30 rounded-full">
+            <time class:list={[
+              "inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full",
+              isOngoing 
+                ? "text-green-800 dark:text-green-200 bg-green-200 dark:bg-green-800/40 border-2 border-green-400/50 shadow-md shadow-green-400/30 animate-pulse-border-green" 
+                : "text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30"
+            ]}>
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
@@ -63,24 +78,7 @@ const { title, company, link, information, date } = Astro.props
             </time>
           </div>
         </div>
-        
-        {(link || information) && (
-          <div class="flex flex-wrap gap-3 mt-4 pt-4 border-t border-green-200 dark:border-green-800/30">
-            {link && (
-              <LinkButton href={link}>
-                <DIPLOMA class="size-5" />
-                View Certificate
-              </LinkButton>
-            )}  
-            {information && (
-              <LinkButton href={information}>
-                <Link class="size-5" />
-                More Info
-              </LinkButton>
-            )}
-          </div>
-        )}
-      </div>
+      </a>
     </div>
   </div>
 </div>
@@ -164,5 +162,46 @@ const { title, company, link, information, date } = Astro.props
     to {
       opacity: 1;
     }
+  }
+
+  @keyframes pulse-ring {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+    }
+  }
+
+  @keyframes shimmer-green {
+    0% {
+      background-position: 200% center;
+    }
+    100% {
+      background-position: -200% center;
+    }
+  }
+
+  @keyframes pulse-border-green {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+    }
+  }
+
+  .animate-pulse-ring {
+    animation: pulse-ring 2s ease-in-out infinite;
+  }
+
+  .animate-shimmer-green {
+    animation: shimmer-green 3s linear infinite;
+  }
+
+  .animate-pulse-border-green {
+    animation: pulse-border-green 2s ease-in-out infinite;
   }
 </style>

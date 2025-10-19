@@ -83,24 +83,30 @@ const PROJECTS = [
 <div class="flex flex-col gap-y-16">
   {
     PROJECTS.map(({ image, title, description, tags, link, github, preview }, index) => (
-    <article class="project-item flex flex-col space-x-0 space-y-8 group md:flex-row md:space-x-8 md:space-y-0 md:items-start" style={`animation-delay: ${index * 0.2}s`}>
-  <div class="w-full md:w-3/5 project-content flex order-2 md:order-1">
-    <div class="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/50 dark:to-slate-900/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:shadow-xl hover:shadow-gray-500/10 dark:hover:shadow-gray-900/30 transition-all duration-300 flex flex-col w-full">
-      <div class="flex items-start gap-3 mb-4">
-        <div class="flex-shrink-0 mt-1">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-            <path d="M7 8l-4 4l4 4" />
-            <path d="M17 8l4 4l-4 4" />
-            <path d="M14 4l-4 16" />
-          </svg>
-        </div>
-        <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 project-title flex-1">
-          {title}
-        </h3>
-      </div>
+    <article class="project-item group" style={`animation-delay: ${index * 0.2}s`}>
+      <div class="project-content w-full">
+        <div class="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/50 dark:to-slate-900/50 rounded-xl border border-gray-200 dark:border-gray-700/50 hover:shadow-xl hover:shadow-gray-500/10 dark:hover:shadow-gray-900/30 transition-all duration-300 flex flex-col w-full overflow-hidden">
+          
+          <div class="p-6">
+            <div class="project-image-wrapper relative transition duration-500 ease-in-out transform overflow-hidden rounded-lg mb-4 max-w-sm float-right ml-6 mb-6">
+              <img alt={title} class="w-full h-auto object-contain transition duration-500 md:group-hover:scale-105" src={image} />
+            </div>
 
-      <div class="flex flex-wrap gap-2 mb-4">
+            <div class="flex items-start gap-3 mb-4">
+              <div class="flex-shrink-0 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M7 8l-4 4l4 4" />
+                  <path d="M17 8l4 4l-4 4" />
+                  <path d="M14 4l-4 16" />
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 project-title flex-1">
+                {title}
+              </h3>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-4">
         {tags.map((tag, tagIndex) => (
           <span
             class={`project-tag inline-flex items-center gap-1.5 rounded-full text-xs ${tag.class} py-1.5 px-3`}
@@ -110,43 +116,40 @@ const PROJECTS = [
             {tag.name}
           </span>
         ))}
+            </div>
+
+            <footer class="flex flex-wrap items-center gap-3 mb-4 project-footer">
+              {github && (
+                <LinkButton href={github}>
+                  <GitHub class="size-5" />
+                  Code
+                </LinkButton>
+              )}
+              
+              {link && (
+                <LinkButton href={link}>
+                  <Link class="size-5" />
+                  Docs
+                </LinkButton>
+              )}
+              
+              {preview && (
+                <LinkButton href={preview}>
+                  <MAIL class="size-5" />
+                  PyPI
+                </LinkButton>
+              )}
+            </footer>
+
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed project-description mb-4">
+              {description}
+            </p>
+            
+            <div class="clear-both"></div>
+          </div>
+        </div>
       </div>
-
-      <p class="text-gray-700 dark:text-gray-300 leading-relaxed project-description flex-1 mb-4">
-        {description}
-      </p>
-
-      <footer class="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-200 dark:border-gray-700 project-footer">
-        {github && (
-          <LinkButton href={github}>
-            <GitHub class="size-5" />
-            Code
-          </LinkButton>
-        )}
-        
-        {link && (
-          <LinkButton href={link}>
-            <Link class="size-5" />
-            Docs
-          </LinkButton>
-        )}
-        
-        {preview && (
-          <LinkButton href={preview}>
-            <MAIL class="size-5" />
-            PyPI
-          </LinkButton>
-        )}
-      </footer>
-    </div>
-  </div>
-
-  <div class="w-full md:w-2/5 project-image-wrapper order-1 md:order-2">
-    <div class="relative transition duration-500 ease-in-out transform shadow-xl overflow-hidden rounded-xl md:group-hover:-translate-y-1 md:group-hover:shadow-2xl lg:border lg:border-gray-800 lg:hover:border-gray-700 lg:hover:bg-gray-800/50 bg-gray-100 dark:bg-gray-900">
-      <img alt={title} class="w-full h-auto object-contain transition duration-500 md:group-hover:scale-105" src={image} />
-    </div>
-  </div>
-</article>
+    </article>
 
     ))
   }
@@ -160,13 +163,13 @@ const PROJECTS = [
 
   .project-image-wrapper {
     opacity: 0;
-    animation: slideInRight 0.8s ease-out forwards;
-    animation-delay: inherit;
+    animation: fadeInScale 0.8s ease-out forwards;
+    animation-delay: calc(var(--delay, 0s) + 0.1s);
   }
 
   .project-content {
     opacity: 0;
-    animation: slideInLeft 0.8s ease-out forwards;
+    animation: fadeInUp 0.8s ease-out forwards;
     animation-delay: inherit;
   }
 
@@ -213,25 +216,14 @@ const PROJECTS = [
     }
   }
 
-  @keyframes slideInLeft {
+  @keyframes fadeInDown {
     from {
       opacity: 0;
-      transform: translateX(-40px);
+      transform: translateY(-20px);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
+      transform: translateY(0);
     }
   }
 

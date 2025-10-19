@@ -1,0 +1,42 @@
+---
+import LanguageCertificationsItem from "./LanguageCertificationsItem.astro"
+
+const LANGUAGE_CERTIFICATIONS = [
+  {
+    date: "December 2023",
+    title: "Certificate of Proficiency in English (C2)",
+    company: "Cambridge University Press and Assessment English",
+    information: "https://www.cambridgeenglish.org/es/exams-and-tests/proficiency/",
+    link: "https://raw.githubusercontent.com/rorro6787/rorro6787/main/Images/diplomaC2.jpeg",
+  },
+]
+---
+
+<ol class="relative mt-16 language-certifications-list">
+  {
+    LANGUAGE_CERTIFICATIONS.map((cert, index) => (
+      <li class="language-certifications-list-item" style={`animation-delay: ${index * 0.15}s`}>
+        <LanguageCertificationsItem {...cert} />
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .language-certifications-list-item {
+    opacity: 0;
+    animation: fadeInItem 0.6s ease-out forwards;
+  }
+
+  @keyframes fadeInItem {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+</style>
+

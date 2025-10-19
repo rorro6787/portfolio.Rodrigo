@@ -13,10 +13,12 @@ import TitleSection from "@/components/TitleSection.astro"
 import Education from "@/components/Education.astro"
 import GitHub from "@/components/icons/GitHub.astro"
 import Certifications from "@/components/Certifications.astro"
+import LanguageCertifications from "@/components/LanguageCertifications.astro"
 import LinkButton from "@/components/LinkButton.astro"
 import Code from "@/components/icons/Code.astro"
 import Study from "@/components/icons/study.astro"
 import Project from "@/components/icons/project.astro"
+import Language from "@/components/icons/Language.astro"
 // import SvgEducation from "@/components/icons/Education.astro"
 ---
 
@@ -55,7 +57,15 @@ import Project from "@/components/icons/project.astro"
       <Education />
     </SectionContainer>
 
-    <SectionContainer id="educacion">
+    <SectionContainer id="idiomas">
+      <TitleSection>
+        <Language class="size-7" />
+        Language Certifications
+      </TitleSection>
+      <LanguageCertifications />
+    </SectionContainer>
+
+    <SectionContainer id="certificaciones">
       <TitleSection>
         <Code class="size-7" />
         Technical Certifications

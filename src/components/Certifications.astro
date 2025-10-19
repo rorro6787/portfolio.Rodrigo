@@ -1,7 +1,7 @@
 ---
 import CertificationsItem from "./CertificationsItem.astro"
-import GitHub from "./icons/GitHub.astro"
-const EXPERIENCE = [
+
+const CERTIFICATIONS = [
   {
     date: "July 2025",
     title: "Oracle AI Vector Search Certified Professional",
@@ -99,25 +99,200 @@ const EXPERIENCE = [
     link: "https://www.udemy.com/certificate/UC-477f01b1-4984-466c-b27b-45eda7ed0c72/",
   },
 ]
+
+// Group certifications by company
+const groupedByCompany = CERTIFICATIONS.reduce((acc, cert) => {
+  if (!acc[cert.company]) {
+    acc[cert.company] = []
+  }
+  acc[cert.company].push(cert)
+  return acc
+}, {} as Record<string, typeof CERTIFICATIONS>)
+
+// Sort companies to have the most certifications first
+const sortedCompanies = Object.entries(groupedByCompany).sort(
+  ([, a], [, b]) => b.length - a.length
+)
 ---
 
-<ol class="relative mt-16 certifications-list">
+<div class="relative mt-16 certifications-container">
   {
-    EXPERIENCE.map((experience, index) => (
-      <li class="certifications-list-item" style={`animation-delay: ${index * 0.1}s`}>
-        <CertificationsItem {...experience} />
-      </li>
+    sortedCompanies.map(([company, certs], companyIndex) => (
+      <details class="company-group" data-company={company} style={`animation-delay: ${companyIndex * 0.15}s`}>
+        <summary class="company-header">
+          <div class="company-info">
+            <div class="company-badge">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M3 21l18 0" />
+                <path d="M9 8l1 0" />
+                <path d="M9 12l1 0" />
+                <path d="M9 16l1 0" />
+                <path d="M14 8l1 0" />
+                <path d="M14 12l1 0" />
+                <path d="M14 16l1 0" />
+                <path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16" />
+              </svg>
+            </div>
+            <div class="company-details">
+              <h3 class="company-name">{company}</h3>
+              <span class="cert-count">{certs.length} {certs.length === 1 ? 'certification' : 'certifications'}</span>
+            </div>
+          </div>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M6 9l6 6l6 -6" />
+          </svg>
+        </summary>
+        <div class="certifications-list">
+          {certs.map((cert, index) => (
+            <div class="certification-item-wrapper" style={`animation-delay: ${index * 0.1}s`}>
+              <CertificationsItem {...cert} />
+            </div>
+          ))}
+        </div>
+      </details>
     ))
   }
-</ol>
+</div>
 
 <style>
-  .certifications-list-item {
-    opacity: 0;
-    animation: fadeInItem 0.5s ease-out forwards;
+  .certifications-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  @keyframes fadeInItem {
+  .company-group {
+    opacity: 0;
+    animation: fadeInScale 0.6s ease-out forwards;
+    background: linear-gradient(to bottom right, rgb(239 246 255) 0%, rgb(224 242 254) 100%);
+    border: 1px solid rgb(191 219 254);
+    border-radius: 1rem;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .company-group:hover {
+    box-shadow: 0 10px 25px -5px rgb(59 130 246 / 0.2);
+    transform: translateY(-2px);
+  }
+
+  :global(.dark) .company-group {
+    background: linear-gradient(to bottom right, rgb(30 58 138 / 0.2) 0%, rgb(29 78 216 / 0.2) 100%);
+    border-color: rgb(37 99 235 / 0.3);
+  }
+
+  .company-group[open] {
+    padding-bottom: 1.5rem;
+  }
+
+  .company-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+    list-style: none;
+  }
+
+  .company-header::-webkit-details-marker {
+    display: none;
+  }
+
+  .company-header:hover {
+    background: rgb(219 234 254 / 0.5);
+  }
+
+  :global(.dark) .company-header:hover {
+    background: rgb(30 64 175 / 0.2);
+  }
+
+  .company-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .company-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, rgb(59 130 246) 0%, rgb(37 99 235) 100%);
+    border-radius: 0.75rem;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .company-group:hover .company-badge {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.4);
+  }
+
+  .company-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .company-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: rgb(30 64 175);
+    margin: 0;
+  }
+
+  :global(.dark) .company-name {
+    color: rgb(147 197 253);
+  }
+
+  .cert-count {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: rgb(59 130 246);
+    background: rgb(219 234 254);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    width: fit-content;
+  }
+
+  :global(.dark) .cert-count {
+    color: rgb(147 197 253);
+    background: rgb(30 58 138 / 0.4);
+  }
+
+  .chevron {
+    color: rgb(59 130 246);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  :global(.dark) .chevron {
+    color: rgb(96 165 250);
+  }
+
+  .company-group[open] .chevron {
+    transform: rotate(180deg);
+  }
+
+  .certifications-list {
+    padding: 1rem 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .certification-item-wrapper {
+    opacity: 0;
+    animation: slideInUp 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeInScale {
     from {
       opacity: 0;
       transform: scale(0.95);
@@ -127,4 +302,34 @@ const EXPERIENCE = [
       transform: scale(1);
     }
   }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 </style>
+
+<script>
+  // Add click tracking and smooth animation
+  document.addEventListener('DOMContentLoaded', () => {
+    const companyGroups = document.querySelectorAll('.company-group')
+    
+    companyGroups.forEach(group => {
+      group.addEventListener('toggle', (e) => {
+        const target = e.target as HTMLDetailsElement
+        if (target.open) {
+          // Scroll into view when opened
+          setTimeout(() => {
+            target.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+          }, 100)
+        }
+      })
+    })
+  })
+</script>
