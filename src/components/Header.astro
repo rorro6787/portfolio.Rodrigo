@@ -18,6 +18,16 @@ const navItems = [
     url: "/#educacion",
   },
   {
+    title: "Language Certs",
+    label: "idiomas",
+    url: "/#idiomas",
+  },
+  {
+    title: "Tech Certs",
+    label: "certificaciones",
+    url: "/#certificaciones",
+  },
+  {
     title: "About me",
     label: "sobre-mi",
     url: "/#sobre-mi",
@@ -34,12 +44,12 @@ const navItems = [
   class="fixed top-0 z-10 flex items-center justify-center w-full mx-auto mt-2"
 >
   <nav
-    class="flex px-3 text-sm font-medium rounded-full text-gray-600 dark:text-gray-200 justify-center items-center"
+    class="flex w-full max-w-full overflow-x-auto no-scrollbar px-2 md:px-3 text-xs md:text-sm font-medium rounded-full text-gray-600 dark:text-gray-200 items-center whitespace-nowrap justify-start md:justify-center gap-1 md:gap-0"
   >
     {
       navItems.map((link) => (
         <a
-          class="relative block px-2 py-2 transition hover:text-blue-500 dark:hover:text-blue-500"
+          class="relative inline-block flex-shrink-0 px-3 py-2 transition hover:text-blue-500 dark:hover:text-blue-500"
           aria-label={link.label}
           href={link.url}
         >
@@ -111,5 +121,14 @@ const navItems = [
     to {
       @apply shadow-lg ring-1 backdrop-blur ring-white/10;
     }
+  }
+
+  /* hide scrollbar on mobile horizontal nav */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
 </style>
