@@ -1,5 +1,51 @@
 ---
 import ExperienceItem from "./ExperienceItem.astro"
+
+// Function to calculate duration between two dates
+function calculateDuration(startDate: Date, endDate: Date): string {
+  const totalMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
+                      (endDate.getMonth() - startDate.getMonth())
+  
+  const years = Math.floor(totalMonths / 12)
+  const months = totalMonths % 12
+  
+  if (years === 0 && months === 0) {
+    return "Less than a month"
+  } else if (years === 0) {
+    return `${months} ${months === 1 ? 'month' : 'months'}`
+  } else if (months === 0) {
+    return `${years} ${years === 1 ? 'year' : 'years'}`
+  } else {
+    return `${years} ${years === 1 ? 'year' : 'years'} ${months} ${months === 1 ? 'month' : 'months'}`
+  }
+}
+
+// Function to parse date string (handles formats like "March 2025", "Sept. 2024", etc.)
+function parseDate(dateStr: string): Date {
+  const monthMap: { [key: string]: number } = {
+    'jan': 0, 'january': 0,
+    'feb': 1, 'february': 1,
+    'mar': 2, 'march': 2,
+    'apr': 3, 'april': 3,
+    'may': 4,
+    'jun': 5, 'june': 5,
+    'jul': 6, 'july': 6,
+    'aug': 7, 'august': 7,
+    'sep': 8, 'sept': 8, 'september': 8,
+    'oct': 9, 'october': 9,
+    'nov': 10, 'november': 10,
+    'dec': 11, 'december': 11
+  }
+  
+  const cleaned = dateStr.toLowerCase().replace(/\./g, '').trim()
+  const parts = cleaned.split(/\s+/)
+  
+  const month = monthMap[parts[0]]
+  const year = parseInt(parts[1])
+  
+  return new Date(year, month, 1)
+}
+
 const EXPERIENCE = [
   {
     date: "March 2025 - Ongoing",
@@ -16,11 +62,25 @@ const EXPERIENCE = [
     link: "https://khaos.uma.es/",
   },
 ]
+
+// Process experiences to add duration
+const processedExperiences = EXPERIENCE.map(exp => {
+  const dateParts = exp.date.split(' - ')
+  const startDate = parseDate(dateParts[0])
+  const isOngoing = dateParts[1].toLowerCase().includes('ongoing') || dateParts[1].toLowerCase().includes('present')
+  const endDate = isOngoing ? new Date() : parseDate(dateParts[1])
+  const duration = calculateDuration(startDate, endDate)
+  
+  return {
+    ...exp,
+    duration
+  }
+})
 ---
 
 <ol class="relative mt-16 experience-list">
   {
-    EXPERIENCE.map((experience, index) => (
+    processedExperiences.map((experience, index) => (
       <li class="experience-list-item" style={`animation-delay: ${index * 0.15}s`}>
         <ExperienceItem {...experience} />
       </li>
