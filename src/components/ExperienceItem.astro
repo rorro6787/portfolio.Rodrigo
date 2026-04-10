@@ -54,10 +54,10 @@ const isOngoing = date.toLowerCase().includes('present') || date.toLowerCase().i
       target="_blank"
       rel="noopener noreferrer"
       class:list={[
-        "block p-6 rounded-lg transition-all duration-300 cursor-pointer",
+        "block p-6 rounded-2xl backdrop-blur-md transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:-translate-y-1 group",
         isOngoing 
-          ? "bg-gradient-to-br from-yellow-100 to-orange-100 dark:from-yellow-900/30 dark:to-orange-900/30 border-2 border-yellow-300 dark:border-yellow-700/50 hover:shadow-2xl hover:shadow-yellow-500/30 ring-2 ring-yellow-400/20" 
-          : "bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 border border-yellow-200 dark:border-yellow-800/30 hover:shadow-lg hover:shadow-yellow-500/10"
+          ? "bg-gradient-to-br from-yellow-100/50 to-orange-100/50 dark:from-yellow-900/40 dark:to-orange-900/40 border-2 border-yellow-300 dark:border-yellow-700/50 hover:shadow-[0_8px_30px_rgb(251,191,36,0.3)] ring-2 ring-yellow-400/20" 
+          : "bg-gradient-to-br from-white/40 to-white/10 dark:from-gray-900/40 dark:to-gray-900/10 border border-gray-200 dark:hover:border-gray-500 hover:border-gray-300 dark:border-gray-800/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-white/60 dark:hover:bg-gray-800/50"
       ]}
     >
       <div class="flex items-start gap-3 mb-4">

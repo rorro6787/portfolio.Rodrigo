@@ -43,17 +43,17 @@ const THEMES = ["Light", "Dark", "System"]
 <style>
   #themes-menu.open {
     display: inline;
-    animation: scale-up-center 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    animation: scale-up-center 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
   }
 
   @keyframes scale-up-center {
     from {
-      transform: scale(0.8);
+      transform: scale(0.8) translateY(-10px);
       opacity: 0;
     }
 
     to {
-      transform: scale(1);
+      transform: scale(1) translateY(0);
       opacity: 1;
     }
   }

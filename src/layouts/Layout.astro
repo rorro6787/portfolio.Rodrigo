@@ -27,13 +27,11 @@ const { description, title } = Astro.props
     <ViewTransitions />
   </head>
 
-  <body class="relative text-black dark:text-white">
-    <div
-    class="absolute top-0 bottom-0 z-[-2] min-h-screen w-full bg-gray-50 dark:bg-gray-950
-    bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(139,92,246,0.1))]
-    dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,255,127,0.3),rgba(0,128,0,0))]"
-  >
-  </div>
+  <body class="relative text-black dark:text-white transition-colors duration-500 ease-in-out">
+    <div class="fixed inset-0 z-[-2] transition-colors duration-500 ease-in-out bg-gray-50 dark:bg-gray-950">
+      <div class="absolute inset-0 transition-opacity duration-500 ease-in-out opacity-100 dark:opacity-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.15),rgba(139,92,246,0.1))]"></div>
+      <div class="absolute inset-0 transition-opacity duration-500 ease-in-out opacity-0 dark:opacity-100 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,255,127,0.3),rgba(0,128,0,0))]"></div>
+    </div>
     <Header />
     <slot />
     <Footer />
@@ -144,5 +142,24 @@ const { description, title } = Astro.props
         transform: scale(0.95);
       }
     </style>
+    <script>
+      document.addEventListener("astro:page-load", () => {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: "0px 0px -50px 0px"
+        });
+
+        document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+          observer.observe(el);
+        });
+      });
+    </script>
   </body>
 </html>

@@ -22,9 +22,9 @@ import GithubIcon from "@/components/icons/GitHub.astro"
       class="flex items-center transition md:justify-center md:hover:scale-105 hero-badge"
     >
       <!--
-      <Badge>Open To Work</Badge>
+      <Badge>Available</Badge>
       -->
-      <Badge>Close To Work</Badge>
+      <Badge>Available</Badge>
     </a>
   </div>
   <h1
@@ -33,7 +33,7 @@ import GithubIcon from "@/components/icons/GitHub.astro"
     Hey, I am Rodrigo Carreira
   </h1>
   <p
-    class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-yellow-200 [&>strong]:text-yellow-500 [&>strong]:font-semibold dark:text-gray-300 hero-description"
+    class="mt-6 text-xl text-gray-800 dark:[&>strong]:text-transparent dark:[&>strong]:bg-clip-text dark:[&>strong]:bg-gradient-to-r dark:[&>strong]:from-blue-400 dark:[&>strong]:to-emerald-400 [&>strong]:text-blue-600 [&>strong]:font-semibold dark:text-gray-300 hero-description"
   >
     <strong>Head of Engineering</strong> at the <strong>Ceuta Tax Authority</strong>. 
   Specializing in leading the <strong>digital transformation</strong> and 
@@ -62,106 +62,90 @@ import GithubIcon from "@/components/icons/GitHub.astro"
 
 <style>
   .hero-container {
-    animation: fadeIn 0.8s ease-out forwards;
+    animation: blurFadeIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .hero-header {
     opacity: 0;
-    animation: slideDown 0.6s ease-out forwards;
-    animation-delay: 0.2s;
+    transform: translateY(10px) scale(0.95);
+    filter: blur(4px);
+    animation: springFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.1s;
   }
 
   .hero-image {
-    animation: rotate360 1s ease-out;
-    animation-delay: 0.3s;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .hero-image:hover {
+    transform: scale(1.1) rotate(-5deg);
   }
 
   .hero-badge {
     opacity: 0;
-    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-    animation-delay: 0.5s;
+    transform: scale(0.9) translateY(10px);
+    filter: blur(2px);
+    animation: springFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.3s;
   }
 
   .hero-title {
     opacity: 0;
-    animation: slideInLeft 0.8s ease-out forwards;
-    animation-delay: 0.4s;
+    transform: translateX(-20px);
+    filter: blur(4px);
+    animation: slideBlurIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.2s;
   }
 
   .hero-description {
     opacity: 0;
-    animation: fadeInUp 0.8s ease-out forwards;
-    animation-delay: 0.6s;
+    transform: translateY(20px);
+    filter: blur(4px);
+    animation: springFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.4s;
   }
 
   .hero-social {
     opacity: 0;
-    animation: fadeInUp 0.8s ease-out forwards;
-    animation-delay: 0.8s;
+    transform: translateY(20px);
+    filter: blur(4px);
+    animation: springFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation-delay: 0.5s;
   }
 
-  @keyframes fadeIn {
+  @keyframes blurFadeIn {
     from {
       opacity: 0;
+      filter: blur(10px);
     }
     to {
       opacity: 1;
+      filter: blur(0);
     }
   }
 
-  @keyframes slideDown {
+  @keyframes springFade {
     from {
       opacity: 0;
-      transform: translateY(-20px);
+      transform: translateY(20px) scale(0.95);
+      filter: blur(4px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(1);
+      filter: blur(0);
     }
   }
 
-  @keyframes slideInLeft {
+  @keyframes slideBlurIn {
     from {
       opacity: 0;
       transform: translateX(-30px);
+      filter: blur(4px);
     }
     to {
       opacity: 1;
       transform: translateX(0);
-    }
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes bounceIn {
-    from {
-      opacity: 0;
-      transform: scale(0.3) rotate(-10deg);
-    }
-    50% {
-      transform: scale(1.05) rotate(3deg);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) rotate(0deg);
-    }
-  }
-
-  @keyframes rotate360 {
-    from {
-      transform: rotate(0deg) scale(0.8);
-    }
-    to {
-      transform: rotate(360deg) scale(1);
+      filter: blur(0);
     }
   }
 </style>

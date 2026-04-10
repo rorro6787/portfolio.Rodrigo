@@ -33,10 +33,10 @@ const isOngoing = date.toLowerCase().includes('ongoing')
         target="_blank"
         rel="noopener noreferrer"
         class:list={[
-          "block p-6 rounded-lg transition-all duration-300 cursor-pointer",
+          "block p-6 rounded-2xl backdrop-blur-md transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:-translate-y-1 group",
           isOngoing 
-            ? "bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/40 dark:to-emerald-900/40 border-l-4 border-green-400 shadow-xl hover:shadow-2xl hover:shadow-green-500/40 hover:translate-x-2 ring-2 ring-green-400/30" 
-            : "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-l-4 border-green-400 shadow-md hover:shadow-xl hover:shadow-green-500/20 hover:translate-x-2"
+            ? "bg-gradient-to-r from-green-100/50 to-emerald-100/50 dark:from-green-900/40 dark:to-emerald-900/40 border-l-4 border-green-400 shadow-xl hover:shadow-[0_8px_30px_rgb(52,211,153,0.3)] ring-2 ring-green-400/30" 
+            : "bg-gradient-to-r from-white/40 to-white/10 dark:from-gray-900/40 dark:to-gray-900/10 border-l-4 border-green-400 shadow-md hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-white/60 dark:hover:bg-gray-800/50"
         ]}
       >
         <div class="flex items-start gap-3 mb-3">
