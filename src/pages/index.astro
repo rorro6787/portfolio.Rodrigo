@@ -3,18 +3,17 @@ import Layout from "@/layouts/Layout.astro"
 
 import AboutMe from "@/components/AboutMe.astro"
 import Briefcase from "@/components/icons/Briefcase.astro"
-import CodeIcon from "@/components/icons/Code.astro"
 import Experience from "@/components/Experience.astro"
 import ProfileCheck from "@/components/icons/ProfileCheck.astro"
 import Projects from "@/components/Projects.astro"
 import SectionContainer from "@/components/SectionContainer.astro"
 import Hero from "@/components/Hero.astro"
 import TitleSection from "@/components/TitleSection.astro"
+import TrajectoryTimeline from "@/components/TrajectoryTimeline.astro"
+import Publications from "@/components/Publications.astro"
 import Education from "@/components/Education.astro"
-import GitHub from "@/components/icons/GitHub.astro"
 import Certifications from "@/components/Certifications.astro"
 import LanguageCertifications from "@/components/LanguageCertifications.astro"
-import LinkButton from "@/components/LinkButton.astro"
 import Code from "@/components/icons/Code.astro"
 import Study from "@/components/icons/study.astro"
 import Project from "@/components/icons/project.astro"
@@ -33,12 +32,42 @@ import Language from "@/components/icons/Language.astro"
     </Hero>
     </SectionContainer>
     <div class="space-y-24">
+    <SectionContainer id="trayectoria">
+      <TitleSection>
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-8" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M7 18a2 2 0 1 0 0 -4a2 2 0 0 0 0 4z" />
+          <path d="M7 6a2 2 0 1 0 0 4a2 2 0 0 0 0 -4z" />
+          <path d="M17 6a2 2 0 1 0 0 4a2 2 0 0 0 0 -4z" />
+          <path d="M7 10v4" />
+          <path d="M17 10c0 3 -10 1 -10 4" />
+        </svg>
+        Trajectory Overview
+      </TitleSection>
+      <TrajectoryTimeline />
+    </SectionContainer>
+
     <SectionContainer id="experiencia">
       <TitleSection>
         <Briefcase class="size-8" />
         Work Experience
       </TitleSection>
       <Experience />
+    </SectionContainer>
+
+    <SectionContainer id="publicaciones">
+      <TitleSection>
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-7" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+          <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+          <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+          <path d="M9 9l1 0" />
+          <path d="M9 13l6 0" />
+          <path d="M9 17l6 0" />
+        </svg>
+        Publications
+      </TitleSection>
+      <Publications />
     </SectionContainer>
 
     <SectionContainer id="proyectos">

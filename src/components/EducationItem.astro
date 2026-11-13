@@ -1,207 +1,242 @@
 ---
-
+interface DetailItem {
+  label: string
+  value: string
+}
 
 interface Props {
+  id?: string
   title: string
   company: string
   link?: string
   information?: string
   date: string
+  details?: DetailItem[]
+  tags?: string[]
 }
 
-const { title, company, link, information, date } = Astro.props
-const isOngoing = date.toLowerCase().includes('ongoing')
+const { id, title, company, link, information, date, details, tags = [] } = Astro.props
+const isOngoing =
+  date.toLowerCase().includes("ongoing") ||
+  date.toLowerCase().includes("present")
+const hasDetails = Boolean((details && details.length > 0) || tags.length > 0)
+const href = link || information || "#"
+const cardClasses = [
+  "edu-card block p-6 rounded-2xl transition-all duration-200 hover:-translate-y-0.5",
+  isOngoing
+    ? "bg-white dark:bg-zinc-900/85 border border-emerald-300 dark:border-emerald-700/70 shadow-sm hover:shadow-md hover:border-emerald-400 dark:hover:border-emerald-500"
+    : "bg-white dark:bg-zinc-900/75 border border-zinc-200 dark:border-zinc-800 hover:border-emerald-300 dark:hover:border-emerald-800/70 hover:shadow-md",
+]
 ---
 
-<div
-  class:list={[
-    "education-item relative mx-12 pb-12 grid before:absolute before:left-[-35px] before:block before:h-full before:border-l-2 before:content-[''] md:grid-cols-1 md:gap-10 md:space-x-4]",
-    isOngoing ? "before:border-green-400/60 dark:before:border-green-400/50" : "before:border-green-400/30 dark:before:border-green-400/20"
-  ]}
->
-  <div class="relative">
-    <div class="education-header">
-      <div class="education-dot-wrapper -left-[48px] absolute">
-        <span class:list={[
-          "education-dot inline-block w-6 h-6 rounded-full border-4 border-gray-50 dark:border-gray-950 shadow-lg",
-          isOngoing ? "bg-green-400 shadow-green-400/70 animate-pulse-ring" : "bg-green-400 shadow-green-400/50"
-        ]}></span>
-      </div>
+<article id={id} data-timeline-card={id} class="relative group scroll-mt-24">
+  <!-- Left-spine node dot -->
+  <div
+    class="absolute -left-[32px] top-7 z-10 flex items-center justify-center"
+    aria-hidden="true"
+  >
+    <span
+      class:list={[
+        "relative w-3.5 h-3.5 rounded-full ring-4 ring-zinc-50 dark:ring-zinc-950 transition-transform duration-200 group-hover:scale-125",
+        isOngoing
+          ? "bg-emerald-500"
+          : "bg-emerald-500/70 dark:bg-emerald-400/70 group-hover:bg-emerald-500",
+      ]}
+    />
+  </div>
 
-      <a 
-        href={link || information || '#'}
-        target="_blank"
-        rel="noopener noreferrer"
-        class:list={[
-          "block p-6 rounded-2xl backdrop-blur-md transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:-translate-y-1 group",
-          isOngoing 
-            ? "bg-gradient-to-r from-green-100/50 to-emerald-100/50 dark:from-green-900/40 dark:to-emerald-900/40 border-l-4 border-green-400 shadow-xl hover:shadow-[0_8px_30px_rgb(52,211,153,0.3)] ring-2 ring-green-400/30" 
-            : "bg-gradient-to-r from-white/40 to-white/10 dark:from-gray-900/40 dark:to-gray-900/10 border-l-4 border-green-400 shadow-md hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-white/60 dark:hover:bg-gray-800/50"
-        ]}
-      >
-        <div class="flex items-start gap-3 mb-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500 dark:text-green-400 flex-shrink-0 mt-1" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-            <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
-            <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
-          </svg>
-          <div>
-            <h3 class:list={[
-              "text-xl font-bold mb-2",
-              isOngoing ? "text-green-500 dark:text-green-400 animate-shimmer-green bg-gradient-to-r from-green-500 via-green-400 to-green-500 bg-clip-text text-transparent bg-[length:200%_100%]" : "text-green-500 dark:text-green-400"
-            ]}>{title}</h3>
-            <h4 class="font-semibold text-lg text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-green-500" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M3 21l18 0" />
-                <path d="M5 21v-14l8 -4v18" />
-                <path d="M19 21v-10l-6 -4" />
-                <path d="M9 9l0 .01" />
-                <path d="M9 12l0 .01" />
-                <path d="M9 15l0 .01" />
-                <path d="M9 18l0 .01" />
+  {hasDetails ? (
+    <details class:list={[...cardClasses, "group/details"]}>
+      <summary class="edu-summary cursor-pointer list-none select-none">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div class="flex items-start gap-3.5 min-w-0">
+            <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
+                <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
               </svg>
-              {company}
-            </h4>
-            <time class:list={[
-              "inline-flex items-center gap-2 px-3 py-1 text-xs font-semibold rounded-full",
-              isOngoing 
-                ? "text-green-800 dark:text-green-200 bg-green-200 dark:bg-green-800/40 border-2 border-green-400/50 shadow-md shadow-green-400/30 animate-pulse-border-green" 
-                : "text-green-700 dark:text-green-300 bg-green-100 dark:bg-green-900/30"
-            ]}>
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
-                <path d="M12 7v5l3 3" />
-              </svg>
+            </div>
+
+            <div class="min-w-0">
+              <h3 class="text-lg md:text-xl font-bold text-emerald-700 dark:text-emerald-400">
+                {title}
+              </h3>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-edu-external-link
+                class="mt-0.5 inline-flex items-center gap-1.5 text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 hover:text-emerald-700 dark:hover:text-emerald-400 transition-colors"
+              >
+                <span>{company}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3.5 h-3.5 opacity-60"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M17 7l-10 10" />
+                  <path d="M8 7l9 0l0 9" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0 pl-[54px] sm:pl-0">
+            <time class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70">
+              {isOngoing && (
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              )}
               {date}
             </time>
+            <span
+              aria-hidden="true"
+              class="inline-flex items-center justify-center w-8 h-8 rounded-full text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 group-hover/details:bg-zinc-200/70 dark:group-hover/details:bg-zinc-700/80 group-hover/details:text-zinc-800 dark:group-hover/details:text-zinc-200 transition-colors"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-4 h-4 transition-transform duration-200 group-open/details:rotate-180"
+                viewBox="0 0 24 24"
+                stroke-width="2.2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M6 9l6 6l6 -6" />
+              </svg>
+            </span>
           </div>
         </div>
-      </a>
-    </div>
-  </div>
-</div>
+      </summary>
+
+      {details && details.length > 0 && (
+        <dl class="mt-5 pt-4 border-t border-zinc-200 dark:border-zinc-800 grid grid-cols-1 md:grid-cols-2 gap-3">
+          {details.map((item) => (
+            <div class="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+              <dt class="text-[11px] font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 mb-1">
+                {item.label}
+              </dt>
+              <dd class="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                {item.value}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {tags.length > 0 && (
+        <div class="flex flex-wrap gap-1.5 mt-4 pt-3.5 border-t border-zinc-200 dark:border-zinc-800">
+          {tags.map((tag) => (
+            <span class="px-2.5 py-0.5 text-[11px] font-medium rounded-md text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/70">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </details>
+  ) : (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class:list={cardClasses}
+    >
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div class="flex items-start gap-3.5 min-w-0">
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/70">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" />
+              <path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
+            </svg>
+          </div>
+
+          <div class="min-w-0">
+            <h3 class="text-lg md:text-xl font-bold text-emerald-700 dark:text-emerald-400">
+              {title}
+            </h3>
+            <p class="mt-0.5 text-sm md:text-base font-semibold text-zinc-800 dark:text-zinc-100 flex items-center gap-1.5">
+              <span>{company}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all"
+                viewBox="0 0 24 24"
+                stroke-width="2"
+                stroke="currentColor"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M17 7l-10 10" />
+                <path d="M8 7l9 0l0 9" />
+              </svg>
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0 pl-[54px] sm:pl-0">
+          <time class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/70">
+            {isOngoing && (
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            )}
+            {date}
+          </time>
+        </div>
+      </div>
+    </a>
+  )}
+</article>
 
 <style>
-  .education-item {
-    opacity: 0;
-    animation: fadeInLeft 0.7s ease-out forwards;
+  .edu-summary::-webkit-details-marker {
+    display: none;
   }
 
-  .education-header {
-    animation: slideInLeft 0.8s ease-out forwards;
-    animation-delay: 0.1s;
-    opacity: 0;
-  }
-
-  .education-dot {
-    animation: scaleIn 0.5s ease-out forwards, float 3s ease-in-out infinite;
-    animation-delay: 0.3s, 0.8s;
-    transform: scale(0);
-  }
-
-
-  @keyframes fadeInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(-30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInLeft {
-    from {
-      opacity: 0;
-      transform: translateX(40px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes slideInRight {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  @keyframes scaleIn {
-    from {
-      transform: scale(0);
-      opacity: 0;
-    }
-    to {
-      transform: scale(1);
-      opacity: 1;
-    }
-  }
-
-  @keyframes float {
-    0%, 100% {
-      transform: scale(1) translateY(0);
-    }
-    50% {
-      transform: scale(1.05) translateY(-3px);
-    }
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @keyframes pulse-ring {
-    0%, 100% {
-      transform: scale(1);
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
-    }
-    50% {
-      transform: scale(1.1);
-      box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
-    }
-  }
-
-  @keyframes shimmer-green {
-    0% {
-      background-position: 200% center;
-    }
-    100% {
-      background-position: -200% center;
-    }
-  }
-
-  @keyframes pulse-border-green {
-    0%, 100% {
-      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
-    }
-    50% {
-      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
-    }
-  }
-
-  .animate-pulse-ring {
-    animation: pulse-ring 2s ease-in-out infinite;
-  }
-
-  .animate-shimmer-green {
-    animation: shimmer-green 3s linear infinite;
-  }
-
-  .animate-pulse-border-green {
-    animation: pulse-border-green 2s ease-in-out infinite;
+  :global([data-timeline-card].is-highlighted .edu-card) {
+    border-color: rgb(37 99 235 / 0.8);
+    box-shadow: 0 0 0 2px rgb(37 99 235 / 0.2);
+    transform: translateY(-2px);
   }
 </style>
+
+<script>
+  function bindExternalEducationLinks() {
+    document.querySelectorAll<HTMLAnchorElement>("[data-edu-external-link]").forEach((link) => {
+      if (link.dataset.boundStopPropagation === "true") return;
+      link.dataset.boundStopPropagation = "true";
+      link.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+    });
+  }
+
+  bindExternalEducationLinks();
+  document.addEventListener("astro:page-load", bindExternalEducationLinks);
+</script>

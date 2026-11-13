@@ -3,9 +3,19 @@ import ThemeToggle from "./ThemeToggle.astro"
 
 const navItems = [
   {
+    title: "Timeline",
+    label: "trayectoria",
+    url: "/#trayectoria",
+  },
+  {
     title: "Experience",
     label: "experiencia",
     url: "/#experiencia",
+  },
+  {
+    title: "Publications",
+    label: "publicaciones",
+    url: "/#publicaciones",
   },
   {
     title: "Projects",
@@ -44,12 +54,12 @@ const navItems = [
   class="fixed top-0 z-10 flex items-center justify-center w-full mx-auto mt-2"
 >
   <nav
-    class="flex w-full md:w-auto mx-auto overflow-x-auto md:overflow-visible no-scrollbar px-2 md:px-4 text-xs md:text-sm font-medium rounded-full text-gray-600 dark:text-gray-200 items-center whitespace-nowrap justify-start md:justify-center gap-1 md:gap-2"
+    class="flex w-full md:w-auto mx-auto overflow-x-auto md:overflow-visible no-scrollbar px-2 md:px-4 text-xs md:text-sm font-medium rounded-full text-zinc-600 dark:text-zinc-300 items-center whitespace-nowrap justify-start md:justify-center gap-1 md:gap-2"
   >
     {
       navItems.map((link) => (
         <a
-          class="relative inline-block flex-shrink-0 px-3 py-2 transition hover:text-blue-500 dark:hover:text-blue-500"
+          class="relative inline-block flex-shrink-0 px-3 py-2 transition hover:text-blue-600 dark:hover:text-blue-400"
           aria-label={link.label}
           href={link.url}
         >
@@ -71,9 +81,9 @@ const navItems = [
         if (entry.isIntersecting) {
           navItems.forEach((item) => {
             if (item.getAttribute("aria-label") == entry.target.id) {
-              item.classList.add("text-blue-500")
+              item.classList.add("text-blue-600", "dark:text-blue-400")
             } else {
-              item.classList.remove("text-blue-500")
+              item.classList.remove("text-blue-600", "dark:text-blue-400")
             }
           })
         }
@@ -111,15 +121,15 @@ const navItems = [
   }
 
   nav {
-    @apply dark:bg-gray-800/90 bg-white/50;
+    @apply dark:bg-zinc-900/85 bg-white/85 border border-zinc-200/80 dark:border-zinc-800/80;
   }
 
   @keyframes nav-shadown {
     0% {
-      @apply dark:bg-gray-800/0 bg-white/0;
+      @apply dark:bg-zinc-900/0 bg-white/0 border-transparent;
     }
     to {
-      @apply shadow-lg ring-1 backdrop-blur ring-white/10;
+      @apply shadow-sm backdrop-blur-md;
     }
   }
 

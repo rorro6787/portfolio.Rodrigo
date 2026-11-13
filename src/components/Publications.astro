@@ -1,0 +1,14 @@
+---
+import PublicationItem from "./PublicationItem.astro"
+import { PUBLICATION_ITEMS } from "@/data/portfolio"
+---
+
+<ol class="relative mt-12 pl-6 ml-3 border-l-2 border-rose-200 dark:border-rose-900/50 space-y-6">
+  {
+    PUBLICATION_ITEMS.map((pub) => (
+      <li>
+        <PublicationItem {...pub} />
+      </li>
+    ))
+  }
+</ol>

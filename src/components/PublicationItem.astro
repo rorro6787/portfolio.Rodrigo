@@ -1,0 +1,179 @@
+---
+import type { PublicationEntry } from "@/data/portfolio"
+
+type Props = PublicationEntry
+
+const {
+  id,
+  date,
+  title,
+  venue,
+  venueShort,
+  pages,
+  authors,
+  abstract,
+  pdfUrl,
+  tags,
+} = Astro.props
+---
+
+<article id={id} data-timeline-card={id} class="relative group scroll-mt-24">
+  <!-- Left-spine node dot -->
+  <div
+    class="absolute -left-[32px] top-7 z-10 flex items-center justify-center"
+    aria-hidden="true"
+  >
+    <span class="relative w-3.5 h-3.5 rounded-full ring-4 ring-zinc-50 dark:ring-zinc-950 transition-transform duration-200 group-hover:scale-125 bg-rose-500" />
+  </div>
+
+  <details class="pub-card block p-6 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 bg-white dark:bg-zinc-900/80 border border-zinc-200 dark:border-zinc-800 hover:border-rose-300 dark:hover:border-rose-700/70 hover:shadow-md group/details">
+    <summary class="pub-summary cursor-pointer list-none select-none">
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div class="flex items-start gap-3.5 min-w-0">
+          <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/70">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+              <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+              <path d="M9 9l1 0" />
+              <path d="M9 13l6 0" />
+              <path d="M9 17l6 0" />
+            </svg>
+          </div>
+
+          <div class="min-w-0">
+            <h3 class="text-lg md:text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+              {title}
+            </h3>
+            <p class="mt-1 text-sm font-semibold text-rose-700 dark:text-rose-400">
+              {venueShort} · {pages}
+            </p>
+            <p class="mt-0.5 text-xs sm:text-sm text-zinc-500 dark:text-zinc-400">
+              {authors.join(", ")}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-shrink-0 pl-[54px] sm:pl-0">
+          <time class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium rounded-full text-rose-800 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800/70">
+            {date}
+          </time>
+          <span
+            aria-hidden="true"
+            class="inline-flex items-center justify-center w-8 h-8 rounded-full text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 group-hover/details:bg-zinc-200/70 dark:group-hover/details:bg-zinc-700/80 group-hover/details:text-zinc-800 dark:group-hover/details:text-zinc-200 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-4 h-4 transition-transform duration-200 group-open/details:rotate-180"
+              viewBox="0 0 24 24"
+              stroke-width="2.2"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path d="M6 9l6 6l6 -6" />
+            </svg>
+          </span>
+        </div>
+      </div>
+    </summary>
+
+    <div class="mt-5 pt-4 border-t border-zinc-200 dark:border-zinc-800 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm">
+        <p class="font-medium text-rose-700 dark:text-rose-400">
+          {venue}
+        </p>
+        <span class="inline-flex items-center self-start px-2.5 py-0.5 text-[11px] font-medium rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/60 flex-shrink-0">
+          Ph.D. Research
+        </span>
+      </div>
+
+      <p class="text-sm text-zinc-600 dark:text-zinc-400">
+        <span class="font-medium text-zinc-500 dark:text-zinc-500 mr-1.5">Authors:</span>
+        {authors.map((author, index) => (
+          <>
+            <span
+              class={
+                author.toLowerCase().includes("rodrigo")
+                  ? "font-semibold text-zinc-900 dark:text-zinc-100 underline decoration-rose-400/60 underline-offset-4"
+                  : ""
+              }
+            >
+              {author}
+            </span>
+            {index < authors.length - 1 && <span>, </span>}
+          </>
+        ))}
+      </p>
+
+      <!-- Abstract -->
+      <div class="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200/80 dark:border-zinc-800">
+        <p class="text-[11px] font-semibold uppercase tracking-wider text-rose-700 dark:text-rose-400 mb-1.5">
+          Abstract
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+          {abstract}
+        </p>
+      </div>
+
+      <!-- Bottom row: tags & PDF link -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-zinc-200/80 dark:border-zinc-800">
+        <div class="flex flex-wrap gap-1.5">
+          {tags.map((tag) => (
+            <span class="px-2.5 py-0.5 text-[11px] font-medium rounded-md text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/70">
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <a
+          href={pdfUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl bg-rose-600 text-white hover:bg-rose-700 dark:bg-rose-500 dark:hover:bg-rose-400 dark:text-zinc-950 transition-colors flex-shrink-0"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+            <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+            <path d="M9 17h6" />
+            <path d="M9 13h6" />
+          </svg>
+          Proceedings PDF ({pages})
+        </a>
+      </div>
+    </div>
+  </details>
+</article>
+
+<style>
+  .pub-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  :global([data-timeline-card].is-highlighted .pub-card) {
+    border-color: rgb(225 29 72 / 0.8);
+    box-shadow: 0 0 0 2px rgb(225 29 72 / 0.2);
+    transform: translateY(-2px);
+  }
+</style>

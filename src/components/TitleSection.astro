@@ -1,5 +1,5 @@
 <h2
-	class={`section-title flex items-center mb-6 text-3xl font-semibold gap-x-3 text-black/80 dark:text-white ${Astro.props.className}`}
+	class={`section-title flex items-center mb-6 text-3xl font-semibold gap-x-3 text-zinc-900 dark:text-zinc-100 ${Astro.props.className}`}
 >
     <slot />
 </h2>
@@ -18,9 +18,14 @@
     left: 0;
     width: 0;
     height: 3px;
-    background: linear-gradient(90deg, #fbbf24, #f59e0b, transparent);
-    animation: expandWidth 1s ease-out forwards;
-    animation-delay: 0.5s;
+    border-radius: 9999px;
+    background-color: #2563eb;
+    animation: expandWidth 0.8s ease-out forwards;
+    animation-delay: 0.3s;
+  }
+
+  :global(.dark) .section-title::after {
+    background-color: #60a5fa;
   }
 
   @keyframes slideInDown {

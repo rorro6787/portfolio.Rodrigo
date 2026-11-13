@@ -1,0 +1,1152 @@
+---
+import {
+  EXPERIENCE_ITEMS,
+  EDUCATION_ITEMS,
+  LANGUAGE_CERTIFICATIONS,
+  TECHNICAL_CERTIFICATIONS,
+  PROJECT_ITEMS,
+  PUBLICATION_ITEMS,
+  calculateDuration,
+  parseDate,
+  parseDateRange,
+  toMonthIndex,
+} from "@/data/portfolio"
+
+type LaneKey = "work" | "education" | "outputs" | "certs"
+type ThemeKind = "work" | "education" | "publication" | "project" | "tech" | "language"
+
+interface SummaryAction {
+  label: string
+  href: string
+}
+
+interface CertSummaryItem {
+  index: string
+  company: string
+  title: string
+  shortSummary: string
+  link: string
+}
+
+interface SummaryPanel {
+  key: string
+  lane: LaneKey
+  theme: ThemeKind
+  categoryLabel: string
+  dateLabel: string
+  isOngoing?: boolean
+  metaNote?: string
+  title: string
+  subtitle: string
+  shortSummary: string
+  tags?: string[]
+  jumpLabel: string
+  targetId?: string
+  targetSection: string
+  targetCompanies?: string[]
+  externalActions?: SummaryAction[]
+  certItems?: CertSummaryItem[]
+}
+
+const THEME_STYLES: Record<
+  ThemeKind,
+  {
+    badge: string
+    subtitle: string
+    jumpBtn: string
+    panelBorder: string
+    countPill: string
+  }
+> = {
+  work: {
+    badge:
+      "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/70",
+    subtitle: "text-amber-700 dark:text-amber-400",
+    jumpBtn:
+      "bg-amber-600 hover:bg-amber-700 text-white dark:bg-amber-500 dark:hover:bg-amber-400 dark:text-zinc-950",
+    panelBorder: "border-l-amber-500",
+    countPill:
+      "bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200",
+  },
+  education: {
+    badge:
+      "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/70",
+    subtitle: "text-emerald-700 dark:text-emerald-400",
+    jumpBtn:
+      "bg-emerald-600 hover:bg-emerald-700 text-white dark:bg-emerald-500 dark:hover:bg-emerald-400 dark:text-zinc-950",
+    panelBorder: "border-l-emerald-500",
+    countPill:
+      "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-200",
+  },
+  publication: {
+    badge:
+      "bg-rose-50 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800/70",
+    subtitle: "text-rose-700 dark:text-rose-400",
+    jumpBtn:
+      "bg-rose-600 hover:bg-rose-700 text-white dark:bg-rose-500 dark:hover:bg-rose-400 dark:text-zinc-950",
+    panelBorder: "border-l-rose-500",
+    countPill:
+      "bg-rose-100 dark:bg-rose-900/50 text-rose-800 dark:text-rose-200",
+  },
+  project: {
+    badge:
+      "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70",
+    subtitle: "text-indigo-700 dark:text-indigo-400",
+    jumpBtn:
+      "bg-indigo-600 hover:bg-indigo-700 text-white dark:bg-indigo-500 dark:hover:bg-indigo-400 dark:text-zinc-950",
+    panelBorder: "border-l-indigo-500",
+    countPill:
+      "bg-indigo-100 dark:bg-indigo-900/50 text-indigo-800 dark:text-indigo-200",
+  },
+  tech: {
+    badge:
+      "bg-blue-50 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/70",
+    subtitle: "text-blue-700 dark:text-blue-400",
+    jumpBtn:
+      "bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-400 dark:text-zinc-950",
+    panelBorder: "border-l-blue-500",
+    countPill:
+      "bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200",
+  },
+  language: {
+    badge:
+      "bg-violet-50 dark:bg-violet-950/60 text-violet-800 dark:text-violet-300 border border-violet-200 dark:border-violet-800/70",
+    subtitle: "text-violet-700 dark:text-violet-400",
+    jumpBtn:
+      "bg-violet-600 hover:bg-violet-700 text-white dark:bg-violet-500 dark:hover:bg-violet-400 dark:text-zinc-950",
+    panelBorder: "border-l-violet-500",
+    countPill:
+      "bg-violet-100 dark:bg-violet-900/50 text-violet-800 dark:text-violet-200",
+  },
+}
+
+const nowDate = new Date()
+const minIdx = 2019 * 12 + 8 // Sept 2019
+const era1End = 2022 * 12 + 8 // Sept 2022
+const era2End = 2024 * 12 + 8 // Sept 2024
+const nowIdx = toMonthIndex(nowDate)
+const maxIdx = nowIdx + 3 // breathing room after "Now" for active Nov 2026 Ph.D.
+
+// Piecewise monotonic scale: gives denser 2024-2026 activity generous width while preserving exact alignment across lanes
+function monthToPercent(idx: number): number {
+  const clamped = Math.max(minIdx, Math.min(maxIdx, idx))
+  if (clamped <= era1End) {
+    return ((clamped - minIdx) / (era1End - minIdx)) * 15
+  }
+  if (clamped <= era2End) {
+    return 15 + ((clamped - era1End) / (era2End - era1End)) * 25
+  }
+  return 40 + ((clamped - era2End) / (maxIdx - era2End)) * 60
+}
+
+const nowPct = monthToPercent(nowIdx)
+
+const yearMarkers = [2019, 2021, 2022, 2023, 2024, 2025, 2026].map((year) => {
+  const idx = year === 2019 ? minIdx : year * 12
+  return {
+    label: String(year),
+    pct: monthToPercent(idx),
+  }
+})
+
+const summaryPanels: SummaryPanel[] = []
+
+// Work Experience bars (2 sub-tracks for concurrent roles)
+const workTracksRaw = [
+  [EXPERIENCE_ITEMS.tupl, EXPERIENCE_ITEMS.oastce],
+  [EXPERIENCE_ITEMS.uma, EXPERIENCE_ITEMS.arsys],
+]
+
+const workTracks = workTracksRaw.map((lane) =>
+  lane.map((item) => {
+    const { startDate, endDate, isOngoing } = parseDateRange(item.date, nowDate)
+    const startPct = monthToPercent(toMonthIndex(startDate))
+    const endPct = monthToPercent(isOngoing ? maxIdx : toMonthIndex(endDate))
+    const widthPct = Math.max(4, endPct - startPct)
+    const duration = calculateDuration(startDate, endDate)
+
+    summaryPanels.push({
+      key: item.id,
+      lane: "work",
+      theme: "work",
+      categoryLabel: "Work Experience",
+      dateLabel: `${item.date} · ${duration}`,
+      isOngoing,
+      metaNote: item.workType,
+      title: item.title,
+      subtitle: item.company,
+      shortSummary: item.shortSummary,
+      tags: item.tags,
+      jumpLabel: "View in Work Experience",
+      targetId: item.id,
+      targetSection: "experiencia",
+      externalActions: item.link
+        ? [{ label: "Company website", href: item.link }]
+        : undefined,
+    })
+
+    return {
+      ...item,
+      isOngoing,
+      startPct,
+      widthPct,
+      duration,
+    }
+  })
+)
+
+// Education bars (chronological oldest -> newest left-to-right on single track)
+const educationBars = [...EDUCATION_ITEMS].reverse().map((edu) => {
+  const { startDate, endDate, isOngoing } = parseDateRange(edu.date, nowDate)
+  const startPct = monthToPercent(toMonthIndex(startDate))
+  const endPct = monthToPercent(isOngoing ? maxIdx : toMonthIndex(endDate))
+  const widthPct = Math.max(5.5, endPct - startPct)
+  const duration = calculateDuration(startDate, endDate)
+
+  summaryPanels.push({
+    key: edu.id,
+    lane: "education",
+    theme: "education",
+    categoryLabel: "Education",
+    dateLabel: `${edu.date}${isOngoing ? " · Active" : ` · ${duration}`}`,
+    isOngoing,
+    metaNote: edu.details ? "Doctoral Thesis" : undefined,
+    title: edu.title,
+    subtitle: edu.company,
+    shortSummary: edu.shortSummary,
+    tags: edu.tags,
+    jumpLabel: edu.details ? "Expand Ph.D. card" : "View in Education",
+    targetId: edu.id,
+    targetSection: "educacion",
+    externalActions: edu.information
+      ? [{ label: "Program info", href: edu.information }]
+      : undefined,
+  })
+
+  return {
+    ...edu,
+    isOngoing,
+    startPct,
+    widthPct,
+    duration,
+  }
+})
+
+// Scientific Publications & Projects milestones
+interface WorkProductMilestone {
+  key: string
+  kind: "publication" | "project"
+  date: string
+  pct: number
+  shortLabel: string
+  title: string
+}
+
+const workProductMilestones: WorkProductMilestone[] = [
+  ...PUBLICATION_ITEMS.map((pub) => {
+    const idx = toMonthIndex(parseDate(pub.date))
+    summaryPanels.push({
+      key: pub.id,
+      lane: "outputs",
+      theme: "publication",
+      categoryLabel: "Scientific Publication",
+      dateLabel: `${pub.date} · ${pub.pages}`,
+      metaNote: pub.venueShort,
+      title: pub.title,
+      subtitle: `${pub.venue} — ${pub.authors.join(", ")}`,
+      shortSummary: pub.shortSummary,
+      tags: pub.tags,
+      jumpLabel: "View in Publications",
+      targetId: pub.id,
+      targetSection: "publicaciones",
+      externalActions: [{ label: "Proceedings PDF", href: pub.pdfUrl }],
+    })
+    return {
+      key: pub.id,
+      kind: "publication" as const,
+      date: pub.date,
+      pct: monthToPercent(idx),
+      shortLabel: pub.shortLabel,
+      title: pub.title,
+    }
+  }),
+  ...PROJECT_ITEMS.map((proj) => {
+    const idx = toMonthIndex(parseDate(proj.date))
+    const actions: SummaryAction[] = []
+    if (proj.github) actions.push({ label: "GitHub", href: proj.github })
+    if (proj.preview) actions.push({ label: "PyPI", href: proj.preview })
+    else if (proj.link) actions.push({ label: "Project link", href: proj.link })
+
+    summaryPanels.push({
+      key: proj.id,
+      lane: "outputs",
+      theme: "project",
+      categoryLabel: "Project",
+      dateLabel: proj.date,
+      title: proj.title,
+      subtitle: "Open-source Research & Software Project",
+      shortSummary: proj.shortSummary,
+      tags: proj.tagKeys,
+      jumpLabel: "View in Projects",
+      targetId: proj.id,
+      targetSection: "proyectos",
+      externalActions: actions,
+    })
+    return {
+      key: proj.id,
+      kind: "project" as const,
+      date: proj.date,
+      pct: monthToPercent(idx),
+      shortLabel: proj.shortLabel,
+      title: proj.title,
+    }
+  }),
+].sort((a, b) => a.pct - b.pct)
+
+// Certifications & Language milestones clustered by month + kind
+interface CertMilestone {
+  key: string
+  kind: "language" | "tech"
+  date: string
+  monthIdx: number
+  pct: number
+  badge: string
+  companies: string[]
+  titles: string[]
+  staggerRow: 0 | 1
+}
+
+const rawMilestones: Omit<CertMilestone, "staggerRow">[] = []
+
+LANGUAGE_CERTIFICATIONS.forEach((cert) => {
+  const idx = toMonthIndex(parseDate(cert.date))
+  const key = `lang-${idx}`
+  rawMilestones.push({
+    key,
+    kind: "language",
+    date: cert.date,
+    monthIdx: idx,
+    pct: monthToPercent(idx),
+    badge: "C2",
+    companies: [cert.company],
+    titles: [cert.title],
+  })
+
+  summaryPanels.push({
+    key,
+    lane: "certs",
+    theme: "language",
+    categoryLabel: "Language Certification",
+    dateLabel: cert.date,
+    metaNote: "CEFR C2",
+    title: cert.title,
+    subtitle: cert.company,
+    shortSummary: cert.shortSummary,
+    jumpLabel: "View in Language Certs",
+    targetSection: "idiomas",
+    externalActions: [{ label: "View Diploma", href: cert.link }],
+  })
+})
+
+const techByMonth = new Map<number, typeof TECHNICAL_CERTIFICATIONS>()
+TECHNICAL_CERTIFICATIONS.forEach((cert) => {
+  const idx = toMonthIndex(parseDate(cert.date))
+  const existing = techByMonth.get(idx) ?? []
+  existing.push(cert)
+  techByMonth.set(idx, existing)
+})
+
+techByMonth.forEach((certs, idx) => {
+  const companies = Array.from(new Set(certs.map((c) => c.company)))
+  const key = `tech-${idx}`
+  const date = certs[0].date
+
+  rawMilestones.push({
+    key,
+    kind: "tech",
+    date,
+    monthIdx: idx,
+    pct: monthToPercent(idx),
+    badge: String(certs.length),
+    companies,
+    titles: certs.map((c) => c.title),
+  })
+
+  if (certs.length === 1) {
+    const single = certs[0]
+    summaryPanels.push({
+      key,
+      lane: "certs",
+      theme: "tech",
+      categoryLabel: "Technical Certification",
+      dateLabel: date,
+      metaNote: single.company,
+      title: single.title,
+      subtitle: `Issued by ${single.company}`,
+      shortSummary: single.shortSummary,
+      jumpLabel: "View in Tech Certs",
+      targetSection: "certificaciones",
+      targetCompanies: companies,
+      externalActions: [{ label: "Verify credential", href: single.link }],
+    })
+  } else {
+    summaryPanels.push({
+      key,
+      lane: "certs",
+      theme: "tech",
+      categoryLabel: "Technical Certifications",
+      dateLabel: `${date} · ${certs.length} certifications`,
+      metaNote: companies.join(" · "),
+      title: `${certs.length} Certifications Earned in ${date}`,
+      subtitle:
+        companies.length === 1
+          ? `Credential bundle issued by ${companies[0]}`
+          : `Credentials issued by ${companies.join(" and ")}`,
+      shortSummary: "",
+      jumpLabel: "Expand in Tech Certs",
+      targetSection: "certificaciones",
+      targetCompanies: companies,
+      certItems: certs.map((cert, i) => ({
+        index: String(i + 1).padStart(2, "0"),
+        company: cert.company,
+        title: cert.title,
+        shortSummary: cert.shortSummary,
+        link: cert.link,
+      })),
+    })
+  }
+})
+
+rawMilestones.sort((a, b) => a.monthIdx - b.monthIdx)
+
+// Stagger dots onto 2 sub-rows whenever horizontally close so dots never collide
+let lastRow0Pct = -100
+let lastRow1Pct = -100
+const certMilestones: CertMilestone[] = rawMilestones.map((m) => {
+  let staggerRow: 0 | 1 = 0
+  if (m.pct - lastRow0Pct < 3.4) {
+    staggerRow =
+      m.pct - lastRow1Pct >= 3.4
+        ? 1
+        : m.pct - lastRow0Pct >= m.pct - lastRow1Pct
+          ? 0
+          : 1
+  }
+  if (staggerRow === 0) lastRow0Pct = m.pct
+  else lastRow1Pct = m.pct
+  return { ...m, staggerRow }
+})
+
+const totalRoles = Object.keys(EXPERIENCE_ITEMS).length
+const totalAcademicMilestones = EDUCATION_ITEMS.length
+const totalPublications = PUBLICATION_ITEMS.length
+const totalProjects = PROJECT_ITEMS.length
+const totalCerts = TECHNICAL_CERTIFICATIONS.length + LANGUAGE_CERTIFICATIONS.length
+---
+
+<div
+  class="rounded-2xl bg-white dark:bg-zinc-900/70 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden"
+  data-trajectory-root
+>
+  <!-- Top Bar: Summary + Filter Controls -->
+  <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-5 py-4 border-b border-zinc-200 dark:border-zinc-800">
+    <div class="flex flex-wrap items-center gap-2 text-xs">
+      <span class="px-2.5 py-1 rounded-full font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/70">
+        {totalRoles} Roles
+      </span>
+      <span class="px-2.5 py-1 rounded-full font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/70">
+        {totalAcademicMilestones} Academic Milestones
+      </span>
+      <span class="px-2.5 py-1 rounded-full font-semibold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/70">
+        {totalPublications} {totalPublications === 1 ? "Publication" : "Publications"}
+      </span>
+      <span class="px-2.5 py-1 rounded-full font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70">
+        {totalProjects} Projects
+      </span>
+      <span class="px-2.5 py-1 rounded-full font-semibold bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/70">
+        {totalCerts} Certifications
+      </span>
+    </div>
+
+    <!-- Interactive Category Filter Tabs -->
+    <div class="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Filter trajectory categories">
+      <button
+        type="button"
+        data-filter="all"
+        class="filter-btn is-active px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        data-filter="work"
+        class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+      >
+        Work
+      </button>
+      <button
+        type="button"
+        data-filter="education"
+        class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+      >
+        Education
+      </button>
+      <button
+        type="button"
+        data-filter="outputs"
+        class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+      >
+        Pubs & Projects
+      </button>
+      <button
+        type="button"
+        data-filter="certs"
+        class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+      >
+        Certs & Languages
+      </button>
+    </div>
+  </div>
+
+  <!-- Horizontally scrollable roadmap on narrow screens; native full-width on desktop -->
+  <div class="overflow-x-auto px-5 pt-4 pb-5">
+    <div class="min-w-[760px]">
+      <!-- Time Axis Header -->
+      <div class="grid grid-cols-[120px_1fr] gap-4 items-center mb-2">
+        <div class="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          Track
+        </div>
+        <div class="relative h-5 text-[11px] font-medium text-zinc-400 dark:text-zinc-500 select-none">
+          {yearMarkers.map((m, idx) => (
+            <span
+              class:list={[
+                "absolute",
+                idx === 0 ? "left-0" : "-translate-x-1/2",
+              ]}
+              style={idx === 0 ? "" : `left: ${m.pct}%`}
+            >
+              {m.label}
+            </span>
+          ))}
+          <span
+            class="absolute -translate-x-1/2 text-emerald-600 dark:text-emerald-400 font-semibold"
+            style={`left: ${nowPct}%`}
+          >
+            Now
+          </span>
+        </div>
+      </div>
+
+      <!-- Tracks Container -->
+      <div class="relative space-y-3">
+        <!-- Vertical Year Gridlines across the track column -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div />
+          <div class="relative h-full">
+            {yearMarkers.slice(1).map((m) => (
+              <div
+                class="absolute top-0 bottom-0 w-px bg-zinc-200 dark:bg-zinc-800"
+                style={`left: ${m.pct}%`}
+              />
+            ))}
+            <div
+              class="absolute top-0 bottom-0 w-px bg-emerald-400/70 dark:bg-emerald-500/60"
+              style={`left: ${nowPct}%`}
+            />
+          </div>
+        </div>
+
+        <!-- LANE GROUP 1: WORK EXPERIENCE -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="work">
+          <div class="flex items-center gap-2 text-xs font-semibold text-amber-700 dark:text-amber-400">
+            <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" />
+            <span>Work</span>
+          </div>
+          <div class="space-y-1.5">
+            {workTracks.map((lane) => (
+              <div class="relative h-8 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60">
+                {lane.map((item) => (
+                  <button
+                    type="button"
+                    data-timeline-trigger
+                    data-detail-key={item.id}
+                    aria-expanded="false"
+                    title={`${item.title} · ${item.company} (${item.date})`}
+                    style={`left: ${item.startPct}%; width: calc(${item.widthPct}% - 2px);`}
+                    class:list={[
+                      "timeline-trigger absolute top-1 bottom-1 px-2 rounded-md flex items-center justify-between gap-1 text-[11px] font-semibold transition-all duration-150 truncate cursor-pointer text-left",
+                      item.isOngoing
+                        ? "bg-amber-600 text-white dark:bg-amber-500 dark:text-zinc-950 hover:opacity-90"
+                        : "bg-amber-50 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800/70 hover:border-amber-400 dark:hover:border-amber-600",
+                    ]}
+                  >
+                    <span class="truncate">{item.shortLabel}</span>
+                    {item.isOngoing && (
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-300 dark:bg-emerald-900 flex-shrink-0 animate-pulse" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- LANE GROUP 2: EDUCATION -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="education">
+          <div class="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
+            <span>Education</span>
+          </div>
+          <div class="relative h-8 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60">
+            {educationBars.map((edu) => (
+              <button
+                type="button"
+                data-timeline-trigger
+                data-detail-key={edu.id}
+                aria-expanded="false"
+                title={`${edu.title} · ${edu.company} (${edu.date})`}
+                style={`left: ${edu.startPct}%; width: calc(${edu.widthPct}% - 2px);`}
+                class:list={[
+                  "timeline-trigger absolute top-1 bottom-1 px-2 rounded-md flex items-center justify-between gap-1 text-[11px] font-semibold transition-all duration-150 truncate cursor-pointer text-left",
+                  edu.isOngoing
+                    ? "bg-emerald-600 text-white dark:bg-emerald-500 dark:text-zinc-950 hover:opacity-90"
+                    : "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800/70 hover:border-emerald-400 dark:hover:border-emerald-600",
+                ]}
+              >
+                <span class="truncate">{edu.shortLabel}</span>
+                {edu.isOngoing && (
+                  <span class="w-1.5 h-1.5 rounded-full bg-white dark:bg-zinc-950 flex-shrink-0 animate-pulse" />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- LANE GROUP 3: PUBLICATIONS & PROJECTS -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="outputs">
+          <div class="flex items-center gap-2 text-xs font-semibold text-rose-700 dark:text-rose-400">
+            <span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0" />
+            <span>Pubs & Projects</span>
+          </div>
+          <div class="relative h-9 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60">
+            {workProductMilestones.map((item) => (
+              <button
+                type="button"
+                data-timeline-trigger
+                data-detail-key={item.key}
+                aria-expanded="false"
+                title={`${item.title} (${item.date})`}
+                style={`left: ${item.pct}%;`}
+                class:list={[
+                  "timeline-trigger absolute top-1.5 bottom-1.5 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] font-semibold transition-all duration-150 hover:scale-105 focus:scale-105 cursor-pointer shadow-sm whitespace-nowrap",
+                  item.pct > 88 ? "-translate-x-3/4" : "-translate-x-1/2",
+                  item.kind === "publication"
+                    ? "bg-rose-600 text-white dark:bg-rose-500"
+                    : "bg-indigo-600 text-white dark:bg-indigo-500",
+                ]}
+              >
+                <span>{item.shortLabel}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- LANE GROUP 4: CERTIFICATIONS & LANGUAGES -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="certs">
+          <div class="flex items-center gap-2 text-xs font-semibold text-blue-700 dark:text-blue-400">
+            <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+            <span>Certs & Lang</span>
+          </div>
+          <div class="relative h-12 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60">
+            {certMilestones.map((m) => (
+              <button
+                type="button"
+                data-timeline-trigger
+                data-detail-key={m.key}
+                aria-expanded="false"
+                title={`${m.date} · ${m.companies.join(", ")} (${m.titles.length})`}
+                style={`left: ${m.pct}%; top: ${m.staggerRow === 0 ? "5px" : "24px"};`}
+                aria-label={`${m.date}: ${m.companies.join(", ")} (${m.titles.join(", ")})`}
+                class:list={[
+                  "timeline-trigger absolute -translate-x-1/2 h-5 min-w-[20px] px-1.5 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-150 hover:scale-125 focus:scale-125 cursor-pointer shadow-sm",
+                  m.kind === "language"
+                    ? "bg-violet-600 text-white dark:bg-violet-500"
+                    : "bg-blue-600 text-white dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400",
+                ]}
+              >
+                {m.badge}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Modal Dialog (opens centered in top-layer when any bar/bubble is clicked) -->
+  <dialog
+    data-summary-modal
+    aria-label="Trajectory item summary"
+    class="trajectory-modal"
+  >
+    <div class="max-h-[85vh] overflow-y-auto rounded-2xl bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border border-zinc-200 dark:border-zinc-800 shadow-2xl">
+      {summaryPanels.map((panel) => {
+        const style = THEME_STYLES[panel.theme]
+        const isCertCluster = Boolean(panel.certItems && panel.certItems.length > 1)
+        const certCount = panel.certItems?.length ?? 0
+        const gridCols =
+          certCount === 2
+            ? "grid-cols-1 md:grid-cols-2"
+            : certCount === 3
+              ? "grid-cols-1 md:grid-cols-3"
+              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-2"
+
+        return (
+          <div
+            data-summary-panel={panel.key}
+            data-panel-wide={isCertCluster ? "true" : "false"}
+            class:list={[
+              "hidden summary-panel-card p-5 sm:p-6 border-l-4",
+              style.panelBorder,
+            ]}
+          >
+            <!-- Modal Header Row -->
+            <div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class:list={[
+                    "px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider rounded-md",
+                    style.badge,
+                  ]}
+                >
+                  {panel.categoryLabel}
+                </span>
+                <span class="inline-flex items-center gap-1.5 text-xs font-medium text-zinc-600 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-2.5 py-0.5 rounded-full">
+                  {panel.isOngoing && (
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  )}
+                  {panel.dateLabel}
+                </span>
+                {panel.metaNote && (
+                  <span class="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                    {panel.metaNote}
+                  </span>
+                )}
+              </div>
+
+              <button
+                type="button"
+                data-close-modal
+                aria-label="Close modal"
+                class="inline-flex items-center justify-center w-8 h-8 rounded-full text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors cursor-pointer flex-shrink-0"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M18 6l-12 12" />
+                  <path d="M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {isCertCluster && panel.certItems ? (
+              <div>
+                <div class="mb-4">
+                  <h3 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+                    {panel.title}
+                  </h3>
+                  <p class:list={["text-xs sm:text-sm font-medium mt-0.5", style.subtitle]}>
+                    {panel.subtitle}
+                  </p>
+                </div>
+
+                <div class:list={["grid gap-3", gridCols]}>
+                  {panel.certItems.map((cert) => (
+                    <a
+                      href={cert.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="group/cert flex flex-col justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-950/60 border border-zinc-200 dark:border-zinc-800 hover:border-blue-400 dark:hover:border-blue-600 hover:bg-white dark:hover:bg-zinc-900 hover:shadow-sm transition-all duration-150"
+                    >
+                      <div>
+                        <div class="flex items-center justify-between gap-2 mb-2.5">
+                          <div class="flex items-center gap-1.5 min-w-0">
+                            <span
+                              class:list={[
+                                "px-1.5 py-0.5 text-[10px] font-bold rounded-md tabular-nums",
+                                style.countPill,
+                              ]}
+                            >
+                              {cert.index}
+                            </span>
+                            <span class="text-xs font-semibold text-zinc-700 dark:text-zinc-300 truncate">
+                              {cert.company}
+                            </span>
+                          </div>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="w-3.5 h-3.5 text-zinc-400 group-hover/cert:text-blue-600 dark:group-hover/cert:text-blue-400 transition-transform duration-150 group-hover/cert:translate-x-0.5 group-hover/cert:-translate-y-0.5 flex-shrink-0"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            fill="none"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          >
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <path d="M17 7l-10 10" />
+                            <path d="M8 7l9 0l0 9" />
+                          </svg>
+                        </div>
+
+                        <h4 class="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover/cert:text-blue-700 dark:group-hover/cert:text-blue-400 leading-snug transition-colors">
+                          {cert.title}
+                        </h4>
+                        <p class="mt-1.5 text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                          {cert.shortSummary}
+                        </p>
+                      </div>
+
+                      <div class="mt-3 pt-2.5 border-t border-zinc-200/70 dark:border-zinc-800/80 flex items-center justify-between text-[11px] font-semibold text-blue-700 dark:text-blue-400">
+                        <span>Verify credential</span>
+                        <span class="transition-transform duration-150 group-hover/cert:translate-x-0.5">
+                          →
+                        </span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h3 class="text-lg sm:text-xl font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
+                  {panel.title}
+                </h3>
+                <p class:list={["text-xs sm:text-sm font-medium mt-1", style.subtitle]}>
+                  {panel.subtitle}
+                </p>
+                <p class="mt-3 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
+                  {panel.shortSummary}
+                </p>
+
+                {panel.tags && panel.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1.5 mt-4">
+                    {panel.tags.map((tag) => (
+                      <span class="px-2.5 py-0.5 text-[11px] font-medium rounded-md text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/70">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <!-- Modal Footer Actions -->
+            <div class="flex flex-wrap items-center justify-end gap-2 mt-5 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+              {panel.externalActions?.map((action) => (
+                <a
+                  href={action.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
+                >
+                  <span>{action.label}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 opacity-70"
+                    viewBox="0 0 24 24"
+                    stroke-width="2"
+                    stroke="currentColor"
+                    fill="none"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M17 7l-10 10" />
+                    <path d="M8 7l9 0l0 9" />
+                  </svg>
+                </a>
+              ))}
+
+              <button
+                type="button"
+                data-jump-trigger
+                data-target-id={panel.targetId}
+                data-target-section={panel.targetSection}
+                data-target-companies={panel.targetCompanies?.join("|")}
+                class:list={[
+                  "inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors cursor-pointer",
+                  style.jumpBtn,
+                ]}
+              >
+                <span>{panel.jumpLabel}</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3.5 h-3.5"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path d="M12 5l0 14" />
+                  <path d="M18 13l-6 6" />
+                  <path d="M6 13l6 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  </dialog>
+</div>
+
+<style>
+  .filter-btn {
+    color: rgb(107 114 128);
+    background: transparent;
+  }
+  .filter-btn:hover {
+    color: rgb(17 24 39);
+    background: rgb(243 244 246);
+  }
+  :global(.dark) .filter-btn {
+    color: rgb(156 163 175);
+  }
+  :global(.dark) .filter-btn:hover {
+    color: rgb(243 244 246);
+    background: rgb(31 41 55 / 0.7);
+  }
+  .filter-btn.is-active {
+    color: rgb(17 24 39);
+    background: rgb(229 231 235 / 0.9);
+  }
+  :global(.dark) .filter-btn.is-active {
+    color: rgb(255 255 255);
+    background: rgb(55 65 81 / 0.8);
+  }
+
+  .timeline-trigger:active {
+    transform: translate(var(--tw-translate-x, 0), var(--tw-translate-y, 0)) scale(0.96);
+  }
+
+  .timeline-trigger.is-selected {
+    z-index: 20;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px rgb(24 24 27);
+  }
+  :global(.dark) .timeline-trigger.is-selected {
+    box-shadow: 0 0 0 2px rgb(24 24 27), 0 0 0 4px #ffffff;
+  }
+
+  .trajectory-modal {
+    margin: auto;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    width: min(92vw, 42rem);
+    max-width: 92vw;
+    max-height: 85vh;
+    overflow: visible;
+  }
+
+  .trajectory-modal[data-modal-size="wide"] {
+    width: min(94vw, 56rem);
+    max-width: 94vw;
+  }
+
+  .trajectory-modal::backdrop {
+    background: rgb(9 9 11 / 0.58);
+    backdrop-filter: blur(4px);
+    animation: backdropFadeIn 0.16s ease-out both;
+  }
+
+  .trajectory-modal[open] {
+    animation: modalPopIn 0.18s ease-out both;
+  }
+
+  @keyframes modalPopIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes backdropFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const root = document.querySelector<HTMLElement>("[data-trajectory-root]")
+    if (!root || root.dataset.boundTrajectory === "true") return
+    root.dataset.boundTrajectory = "true"
+
+    const filterBtns = root.querySelectorAll<HTMLButtonElement>("[data-filter]")
+    const laneGroups = root.querySelectorAll<HTMLElement>("[data-lane-group]")
+    const triggers = root.querySelectorAll<HTMLButtonElement>("[data-timeline-trigger]")
+    const modal = root.querySelector<HTMLDialogElement>("[data-summary-modal]")
+    const panels = root.querySelectorAll<HTMLElement>("[data-summary-panel]")
+    const closeBtns = root.querySelectorAll<HTMLButtonElement>("[data-close-modal]")
+    const jumpBtns = root.querySelectorAll<HTMLButtonElement>("[data-jump-trigger]")
+
+    let activeTrigger: HTMLButtonElement | null = null
+
+    const clearTriggerState = () => {
+      triggers.forEach((t) => {
+        t.classList.remove("is-selected")
+        t.setAttribute("aria-expanded", "false")
+      })
+      panels.forEach((p) => p.classList.add("hidden"))
+      activeTrigger = null
+    }
+
+    const closeModal = (restoreFocus = false) => {
+      const triggerToFocus = restoreFocus ? activeTrigger : null
+      if (modal?.open) {
+        modal.close()
+      }
+      clearTriggerState()
+      if (triggerToFocus) {
+        triggerToFocus.focus({ preventScroll: true })
+      } else if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur()
+      }
+    }
+
+    const openModalForKey = (key: string, trigger: HTMLButtonElement) => {
+      if (!modal) return
+      const targetPanel = root.querySelector<HTMLElement>(
+        `[data-summary-panel="${CSS.escape(key)}"]`
+      )
+      if (!targetPanel) return
+
+      activeTrigger = trigger
+      triggers.forEach((t) => {
+        const isCurrent = t === trigger
+        t.classList.toggle("is-selected", isCurrent)
+        t.setAttribute("aria-expanded", String(isCurrent))
+      })
+
+      panels.forEach((p) => p.classList.toggle("hidden", p !== targetPanel))
+      modal.dataset.modalSize =
+        targetPanel.dataset.panelWide === "true" ? "wide" : "default"
+
+      if (!modal.open) {
+        modal.showModal()
+      }
+    }
+
+    // Filter tabs
+    filterBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const filter = btn.dataset.filter ?? "all"
+        filterBtns.forEach((b) => b.classList.toggle("is-active", b === btn))
+        laneGroups.forEach((group) => {
+          const lane = group.dataset.laneGroup
+          const show = filter === "all" || filter === lane
+          group.classList.toggle("hidden", !show)
+        })
+      })
+    })
+
+    // Timeline bar / bubble click opens floating modal
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const key = trigger.dataset.detailKey
+        if (key) {
+          openModalForKey(key, trigger)
+        }
+      })
+    })
+
+    // Close modal controls (button, backdrop click, native Escape close event)
+    closeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => closeModal(true))
+    })
+
+    modal?.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        closeModal(true)
+      }
+    })
+
+    modal?.addEventListener("close", () => {
+      clearTriggerState()
+    })
+
+    // Jump-to-section action inside floating modal
+    jumpBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.targetId
+        const targetSection = btn.dataset.targetSection
+        const companiesRaw = btn.dataset.targetCompanies
+
+        closeModal(false)
+
+        requestAnimationFrame(() => {
+          if (targetId) {
+            const card = document.querySelector<HTMLElement>(
+              `[data-timeline-card="${CSS.escape(targetId)}"]`
+            )
+            if (card) {
+              const collapsible = card.querySelector("details")
+              if (collapsible) collapsible.open = true
+              card.scrollIntoView({ behavior: "smooth", block: "center" })
+              card.classList.add("is-highlighted")
+              setTimeout(() => card.classList.remove("is-highlighted"), 1800)
+              return
+            }
+          }
+
+          if (companiesRaw && targetSection === "certificaciones") {
+            const companies = companiesRaw.split("|").filter(Boolean)
+            let firstGroup: HTMLDetailsElement | null = null
+            companies.forEach((company) => {
+              const group = document.querySelector<HTMLDetailsElement>(
+                `details[data-company="${CSS.escape(company)}"]`
+              )
+              if (group) {
+                group.open = true
+                if (!firstGroup) firstGroup = group
+              }
+            })
+            if (firstGroup) {
+              ;(firstGroup as HTMLDetailsElement).scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              })
+              return
+            }
+          }
+
+          if (targetSection) {
+            const section = document.getElementById(targetSection)
+            section?.scrollIntoView({ behavior: "smooth", block: "start" })
+          }
+        })
+      })
+    })
+  })
+</script>

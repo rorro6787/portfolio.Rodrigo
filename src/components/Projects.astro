@@ -11,9 +11,12 @@ import Yolo from "./icons/Yolo.astro"
 import HuggingFace from "./icons/HuggingFace.astro"
 import Next from "./icons/Next.astro"
 import Pandas from "./icons/Pandas.astro"
-import { preview } from "astro"
+import { PROJECT_ITEMS, type ProjectTagKey } from "@/data/portfolio"
 
-const TAGS = {
+const TAGS: Record<
+  ProjectTagKey,
+  { name: string; class: string; icon: any }
+> = {
   Oracle: {
     name: "Oracle Cloud Infrastucture",
     class: "bg-[#003159] text-white",
@@ -55,51 +58,36 @@ const TAGS = {
     icon: Pandas,
   },
 }
-
-const PROJECTS = [
-  {
-    title: "NND",
-    description: "Segmenting sclerosis lesions on 3‑D MRI volumes is a critical yet time‑consuming step in clinical workflows. This repository contains the open‑source code, experiments and analysis accompanying my bachelor’s thesis, which investigates the synergy between YOLOv11 object detection and nnUNet semantic segmentation, enhanced by a novel 3‑D consensus‑ensemble strategy.",
-    link: "https://github.com/rorro6787/NND/blob/main/information/TFG_Rodrigo_Carreira_Villalta.pdf",
-    github: "https://github.com/rorro6787/NND",
-    preview: "https://pypi.org/project/nnd/",
-    image: "/brain.png",
-    tags: [TAGS.PYTHON, TAGS.NUMPY, TAGS.PANDAS, TAGS.PYTORCH, TAGS.YOLO],
-  },
-{
-    title: "SAES",
-    description: "SAES is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. It includes statistical tests (Friedman, Wilcoxon, Nemenyi), data visualization tools (boxplots, critical distance plots), automatic LaTeX report generation, now with support for multi-objective Pareto front plots in 2D, 3D, parallel coordinates for higher dimensions and Bayesian Posterior Plot.",
-    link: "https://jMetal.github.io/SAES/",
-    github: "https://github.com/jMetal/SAES",
-    preview: "https://pypi.org/project/SAES/",
-    image: "/projects/SAES_logo.png",
-    tags: [TAGS.PYTHON, TAGS.NUMPY, TAGS.PANDAS],
-  },
-  
-]
 ---
 
 
 <div class="flex flex-col gap-y-16">
   {
-    PROJECTS.map(({ image, title, description, tags, link, github, preview }, index) => (
-    <article class="project-item group" style={`animation-delay: ${index * 0.2}s`}>
+    PROJECT_ITEMS.map(({ id, date, image, title, description, tagKeys, link, github, preview }, index) => {
+      const tags = tagKeys.map((key) => TAGS[key])
+      return (
+    <article id={id} data-timeline-card={id} class="project-item group scroll-mt-24" style={`animation-delay: ${index * 0.2}s`}>
       <div class="project-content w-full">
-        <div class="bg-gradient-to-br from-white/40 to-white/10 dark:from-gray-900/40 dark:to-gray-900/10 rounded-2xl border border-gray-200 dark:border-gray-800/80 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:bg-white/60 dark:hover:bg-gray-800/50 transition-all duration-500 backdrop-blur-md flex flex-col w-full overflow-hidden hover:scale-[1.02] hover:-translate-y-1">
+        <div class="proj-card bg-white dark:bg-zinc-900/75 rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-indigo-300 dark:hover:border-indigo-700/70 hover:shadow-md transition-all duration-300 flex flex-col w-full overflow-hidden hover:-translate-y-0.5">
           
           <div class="p-6">
-            <div class="flex items-start gap-3 mb-4">
-              <div class="flex-shrink-0 mt-1">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                  <path d="M7 8l-4 4l4 4" />
-                  <path d="M17 8l4 4l-4 4" />
-                  <path d="M14 4l-4 16" />
-                </svg>
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="flex items-start gap-3 flex-1 min-w-0">
+                <div class="flex-shrink-0 mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M7 8l-4 4l4 4" />
+                    <path d="M17 8l4 4l-4 4" />
+                    <path d="M14 4l-4 16" />
+                  </svg>
+                </div>
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-zinc-100 project-title flex-1">
+                  {title}
+                </h3>
               </div>
-              <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100 project-title flex-1">
-                {title}
-              </h3>
+              <time class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/70 flex-shrink-0">
+                {date}
+              </time>
             </div>
 
             <div class="project-image-wrapper relative transition duration-500 ease-in-out transform overflow-hidden rounded-lg mb-4 max-w-sm md:float-right md:ml-6 md:mb-6 mx-auto md:mx-0">
@@ -141,7 +129,7 @@ const PROJECTS = [
               )}
             </footer>
 
-            <p class="text-gray-700 dark:text-gray-300 leading-relaxed project-description mb-4">
+            <p class="text-zinc-600 dark:text-zinc-300 leading-relaxed project-description mb-4">
               {description}
             </p>
             
@@ -150,12 +138,17 @@ const PROJECTS = [
         </div>
       </div>
     </article>
-
-    ))
+      )
+    })
   }
 </div>
 
 <style>
+  :global([data-timeline-card].is-highlighted .proj-card) {
+    border-color: rgb(79 70 229 / 0.8);
+    box-shadow: 0 0 0 2px rgb(79 70 229 / 0.2);
+    transform: translateY(-2px);
+  }
   .project-item {
     opacity: 0;
     animation: fadeInScale 0.8s ease-out forwards;

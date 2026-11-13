@@ -1,143 +1,15 @@
 ---
 import CertificationsItem from "./CertificationsItem.astro"
-
-const CERTIFICATIONS = [
-  {
-    date: "April 2026",
-    title: "Introduction to agent skills",
-    company: "Anthropic",
-    link: "http://verify.skilljar.com/c/36zny5iw625i",
-  },
-  {
-    date: "April 2026",
-    title: "Model Context Protocol: Advanced Topics",
-    company: "Anthropic",
-    link: "https://verify.skilljar.com/c/3zkwt72k35jy",
-  },
-  {
-    date: "April 2026",
-    title: "Al Fluency Framework & Foundations",
-    company: "Anthropic",
-    link: "https://verify.skilljar.com/c/tjt35nj4mh32",
-  },
-  {
-    date: "April 2026",
-    title: "Claude Code in Action",
-    company: "Anthropic",
-    link: "https://verify.skilljar.com/c/etdqxifogznt",
-  },
-  {
-    date: "March 2026",
-    title: "AZ-900: Microsoft Azure Fundamentals",
-    company: "Microsoft",
-    link: "https://www.credly.com/badges/03f10561-bfe6-4d9b-bae6-f3d556b9d02b/linked_in_profile",
-  },
-  {
-    date: "July 2025",
-    title: "Oracle AI Vector Search Certified Professional",
-    company: "Oracle",
-    link: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=4A92B86FB26278A35CE8E68B3BD4BAA3B01B2EB7E24EF7E9CC470ABFDA5B5C61",
-  },
-  {
-    date: "July 2025",
-    title: "Oracle Cloud Infrastructure 2025 Certified Data Science Professional",
-    company: "Oracle",
-    link: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=2BDDDCD9363B054F5122AF769B77E8BA9F368CE7E45238AA15AB3247D45C9CD4",
-  },
-  {
-    date: "July 2025",
-    title: "Oracle Cloud Infrastructure 2025 Generative AI Certified Professional",
-    company: "Oracle",
-    link: "https://catalog-education.oracle.com/ords/certview/sharebadge?id=40B97065B7DE4C06687FB0689D921902ABC9779F7A2B76153DE87F9AC6ECAF63",
-  },
-  {
-    date: "October 2024",
-    title: "Salesforce AI Associate",
-    company: "Salesforce",
-    link: "https://github.com/rorro6787/rorro6787/blob/main/Images/Salesforce_AI_Associate.pdf",
-  },
-  {
-    date: "October 2024",
-    title: "Disaster Risk Monitoring Using Satellite Imagery",
-    company: "Nvidia DLI",
-    link: "https://learn.nvidia.com/certificates?id=9nn5auHiTg-pNW5kd4o-EA#",
-  },
-  {
-    date: "October 2024",
-    title: "Getting Started with AI on Jetson Nano",
-    company: "Nvidia DLI",
-    link: "https://learn.nvidia.com/certificates?id=PgFiuC9URCa0CyNw5C7HKQ",
-  },
-  {
-    date: "August 2024",
-    title: "Efficient Large Language Model (LLM) Customization",
-    company: "Nvidia DLI",
-    link: "https://learn.nvidia.com/certificates?id=zsC9V4AyQXesN06iAhXuYQ#",
-  },
-  {
-    date: "July 2024",
-    title: "Oracle Guided Learning Content Developer Certified Foundations Associate",
-    company: "Oracle",
-    link: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=F09397A2CCA0CCE103FD6E5FD4871757D1B8514D64F6CB652E6FC8BE30D753B8",
-  },
-  {
-    date: "July 2024",
-    title: "Oracle Guided Learning Project Management Foundations Associate",
-    company: "Oracle",
-    link: "https://catalog-education.oracle.com/pls/certview/sharebadge?id=DCC06D1FE4C8D1E31A9756A7C47E22F6EFBCFAA116AF1FD0DCB9836D8E04410B",
-  },
-  {
-    date: "July 2024",
-    title: "Rapid Application Development with Large Language Models (LLMs)",
-    company: "Nvidia DLI",
-    link: "https://learn.nvidia.com/certificates?id=bqNe6vAJSPGOZKYifg4YpQ",
-  },
-  {
-    date: "March 2024",
-    title: "Building Transformer-Based Natural Language Processing Applications",
-    company: "Nvidia DLI",
-    link: "https://courses.nvidia.com/certificates/41b0cdb2f9714217aa7f65d4f23f8fc3/",
-  },
-  {
-    date: "November 2023",
-    title: "Fundamentals of Deep Learning",
-    company: "Nvidia DLI",
-    link: "https://courses.nvidia.com/certificates/ab163f0f315946509a663944a01e37e2/",
-  },
-  {
-    date: "October 2023",
-    title: "Fundamentals of Accelerated Computing with CUDA C/C++",
-    company: "Nvidia DLI",
-    link: "https://courses.nvidia.com/certificates/24256f061e75432899a9f7db2f0edebf/",
-  },
-  {
-    date: "August 2023",
-    title: "Git: ¡de Noob a Pro!",
-    company: "Mastermind",
-    link: "https://mastermind.ac/certificates/b6a0dc594c9a4193aec061c398ae4a87",
-  },
-  {
-    date: "May 2023",
-    title: "Aprende a programar con Python",
-    company: "Mastermind",
-    link: "https://mastermind.ac/certificates/29bc709927a348e6bad0958ae8959088",
-  },
-  {
-    date: "November 2022",
-    title: "Aprende a usar bien Microsoft Word",
-    company: "Udemy",
-    link: "https://www.udemy.com/certificate/UC-477f01b1-4984-466c-b27b-45eda7ed0c72/",
-  },
-]
+import { TECHNICAL_CERTIFICATIONS } from "@/data/portfolio"
 
 // Group certifications by company
-const groupedByCompany = CERTIFICATIONS.reduce((acc, cert) => {
+const groupedByCompany = TECHNICAL_CERTIFICATIONS.reduce((acc, cert) => {
   if (!acc[cert.company]) {
     acc[cert.company] = []
   }
   acc[cert.company].push(cert)
   return acc
-}, {} as Record<string, typeof CERTIFICATIONS>)
+}, {} as Record<string, typeof TECHNICAL_CERTIFICATIONS>)
 
 // Sort companies to have the most certifications first
 const sortedCompanies = Object.entries(groupedByCompany).sort(
@@ -190,41 +62,43 @@ const sortedCompanies = Object.entries(groupedByCompany).sort(
   .certifications-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   .company-group {
-    opacity: 0;
-    animation: fadeInScale 0.6s ease-out forwards;
-    background: linear-gradient(to bottom right, rgb(239 246 255) 0%, rgb(224 242 254) 100%);
-    border: 1px solid rgb(191 219 254);
+    background: rgb(255 255 255);
+    border: 1px solid rgb(228 228 231);
     border-radius: 1rem;
-    padding: 0.5rem;
-    transition: all 0.3s ease;
+    padding: 0.25rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
   }
 
   .company-group:hover {
-    box-shadow: 0 10px 25px -5px rgb(59 130 246 / 0.2);
-    transform: translateY(-2px);
+    border-color: rgb(212 212 216);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.06);
   }
 
   :global(.dark) .company-group {
-    background: linear-gradient(to bottom right, rgb(30 58 138 / 0.2) 0%, rgb(29 78 216 / 0.2) 100%);
-    border-color: rgb(37 99 235 / 0.3);
+    background: rgb(24 24 27 / 0.65);
+    border-color: rgb(39 39 42);
+  }
+
+  :global(.dark) .company-group:hover {
+    border-color: rgb(63 63 70);
   }
 
   .company-group[open] {
-    padding-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
   }
 
   .company-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
     border-radius: 0.75rem;
-    transition: all 0.3s ease;
+    transition: background-color 0.2s ease;
     list-style: none;
   }
 
@@ -233,11 +107,11 @@ const sortedCompanies = Object.entries(groupedByCompany).sort(
   }
 
   .company-header:hover {
-    background: rgb(219 234 254 / 0.5);
+    background: rgb(244 244 245 / 0.7);
   }
 
   :global(.dark) .company-header:hover {
-    background: rgb(30 64 175 / 0.2);
+    background: rgb(39 39 42 / 0.5);
   }
 
   .company-info {
@@ -250,60 +124,67 @@ const sortedCompanies = Object.entries(groupedByCompany).sort(
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    background: linear-gradient(135deg, rgb(59 130 246) 0%, rgb(37 99 235) 100%);
+    width: 2.75rem;
+    height: 2.75rem;
+    background: rgb(239 246 255);
+    border: 1px solid rgb(191 219 254);
     border-radius: 0.75rem;
-    color: white;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-    transition: all 0.3s ease;
+    color: rgb(37 99 235);
+    transition: transform 0.2s ease;
+  }
+
+  :global(.dark) .company-badge {
+    background: rgb(23 37 84 / 0.6);
+    border-color: rgb(30 64 175 / 0.6);
+    color: rgb(96 165 250);
   }
 
   .company-group:hover .company-badge {
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 10px 15px -3px rgb(59 130 246 / 0.4);
+    transform: scale(1.04);
   }
 
   .company-details {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.2rem;
   }
 
   .company-name {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
-    color: rgb(30 64 175);
+    color: rgb(24 24 27);
     margin: 0;
   }
 
   :global(.dark) .company-name {
-    color: rgb(147 197 253);
+    color: rgb(244 244 245);
   }
 
   .cert-count {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: rgb(59 130 246);
-    background: rgb(219 234 254);
-    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgb(29 78 216);
+    background: rgb(239 246 255);
+    border: 1px solid rgb(191 219 254);
+    padding: 0.15rem 0.6rem;
     border-radius: 9999px;
     width: fit-content;
   }
 
   :global(.dark) .cert-count {
     color: rgb(147 197 253);
-    background: rgb(30 58 138 / 0.4);
+    background: rgb(23 37 84 / 0.6);
+    border-color: rgb(30 64 175 / 0.6);
   }
 
   .chevron {
-    color: rgb(59 130 246);
-    transition: transform 0.3s ease;
+    color: rgb(113 113 122);
+    transition: transform 0.25s ease;
     flex-shrink: 0;
   }
 
   :global(.dark) .chevron {
-    color: rgb(96 165 250);
+    color: rgb(161 161 170);
   }
 
   .company-group[open] .chevron {
@@ -311,43 +192,21 @@ const sortedCompanies = Object.entries(groupedByCompany).sort(
   }
 
   .certifications-list {
-    padding: 1rem 1.5rem 0;
-    display: flex;
-    flex-direction: column;
+    padding: 0.75rem 1.25rem 0;
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
     gap: 0.75rem;
   }
 
-  .certification-item-wrapper {
-    opacity: 0;
-    animation: slideInUp 0.5s ease-out forwards;
-  }
-
-  @keyframes fadeInScale {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  @media (min-width: 768px) {
+    .certifications-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 </style>
 
 <script>
-  // Add click tracking and smooth animation
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('astro:page-load', () => {
     const companyGroups = document.querySelectorAll('.company-group')
     
     companyGroups.forEach(group => {

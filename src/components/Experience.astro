@@ -1,114 +1,77 @@
 ---
 import ExperienceItem from "./ExperienceItem.astro"
+import {
+  EXPERIENCE_TREE_ROWS,
+  calculateDuration,
+  parseDateRange,
+  type ExperienceEntry,
+} from "@/data/portfolio"
 
-// Function to calculate duration between two dates
-function calculateDuration(startDate: Date, endDate: Date): string {
-  const totalMonths = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
-                      (endDate.getMonth() - startDate.getMonth())
-  
-  const years = Math.floor(totalMonths / 12)
-  const months = totalMonths % 12
-  
-  if (years === 0 && months === 0) {
-    return "Less than a month"
-  } else if (years === 0) {
-    return `${months} ${months === 1 ? 'month' : 'months'}`
-  } else if (months === 0) {
-    return `${years} ${years === 1 ? 'year' : 'years'}`
-  } else {
-    return `${years} ${years === 1 ? 'year' : 'years'} ${months} ${months === 1 ? 'month' : 'months'}`
-  }
-}
+const nowDate = new Date()
+const presentLabel = nowDate.toLocaleDateString("en-US", {
+  month: "short",
+  year: "numeric",
+})
 
-// Function to parse date string (handles formats like "March 2025", "Sept. 2024", etc.)
-function parseDate(dateStr: string): Date {
-  const monthMap: { [key: string]: number } = {
-    'jan': 0, 'january': 0,
-    'feb': 1, 'february': 1,
-    'mar': 2, 'march': 2,
-    'apr': 3, 'april': 3,
-    'may': 4,
-    'jun': 5, 'june': 5,
-    'jul': 6, 'july': 6,
-    'aug': 7, 'august': 7,
-    'sep': 8, 'sept': 8, 'september': 8,
-    'oct': 9, 'october': 9,
-    'nov': 10, 'november': 10,
-    'dec': 11, 'december': 11
-  }
-  
-  const cleaned = dateStr.toLowerCase().replace(/\./g, '').trim()
-  const parts = cleaned.split(/\s+/)
-  
-  const month = monthMap[parts[0]]
-  const year = parseInt(parts[1])
-  
-  return new Date(year, month, 1)
-}
-
-const EXPERIENCE = [
-  {
-    date: "February 2026 - Ongoing",
-    title: "Head of Engineering",
-    company: "Organismo Autónomo de Servicios Tributarios de Ceuta (OASTCE)",
-    description: ["Strategic lead responsible for overseeing the technological transition and digital modernization of the Tax Authority. My role focuses on ensuring the reliability, security, and evolution of the organization’s technical infrastructure to optimize public service delivery and operational efficiency."], 
-    link: "https://www.tributosceuta.org/",
-  },
-  {
-    date: "March 2025 - February 2026",
-    title: "Jr. AI Software Engineer",
-    company: "Tupl Inc.",
-    description: ["Developed and deployed AI, ML, and GenAI solutions across internal TuplOS tools and enterprise services, integrating LLMs, RAG pipelines, and AI agents to automate workflows and enhance system intelligence. Designed and implemented an agentic framework supporting MCP, A2A communication, RAGs, and multi-agent orchestration, enabling the creation and deployment of custom AI agents for diverse use cases across the company and partner ecosystems.", "As a qualified software engineer, led the end-to-end development lifecycle of AI-driven systems, including architecture design, CI/CD pipeline implementation using Jenkins, and production deployment using Kubernetes and Docker. Designed scalable microservice architectures, created and maintained Helm charts for automated Kubernetes deployments, and implemented cluster monitoring and service management to ensure reliability and scalability. Applied modern software design patterns, optimized database integration, and collaborated cross-functionally to deliver robust, secure, and high-performance enterprise solutions aligned with business objectives."], 
-    link: "https://www.tupl.com/",
-  },
-  {
-    date: "Sept. 2024 - June 2025",
-    title: "AI Researcher",
-    company: "Scenic and KHAOS Research Group, ITIS UMA",
-    description: ["Coauthored and published the SAES Python library for non-parametric statistical tests with researcher Antonio J. Nebro, enabling advanced statistical analysis and visualization. Conducted research on automatic code generation using Large Language Models (LLMs), integrating LangChain with frameworks such as jMetal and jMetalPy for multi-objective optimization.", "Developed business process optimization solutions using machine learning (ML) and Graph Neural Networks (GNNs). Worked with Business Process Model and Notation (BPMN) tools such as Activiti, Bonita BPM, and Camunda. Applied my knowledge of artificial intelligence, focusing on machine learning and GNNs, while also utilizing genetic algorithms, neural networks, and optimization techniques."], 
-    link: "https://khaos.uma.es/",
-  },
-]
-
-// Process experiences to add duration
-const processedExperiences = EXPERIENCE.map(exp => {
-  const dateParts = exp.date.split(' - ')
-  const startDate = parseDate(dateParts[0])
-  const isOngoing = dateParts[1].toLowerCase().includes('ongoing') || dateParts[1].toLowerCase().includes('present')
-  const endDate = isOngoing ? new Date() : parseDate(dateParts[1])
-  const duration = calculateDuration(startDate, endDate)
-  
+function enrichEntry(exp: ExperienceEntry) {
+  const { startDate, endDate } = parseDateRange(exp.date, nowDate)
   return {
     ...exp,
-    duration
+    duration: calculateDuration(startDate, endDate),
   }
-})
+}
+
+const enrichedRows = EXPERIENCE_TREE_ROWS.map((row) => ({
+  left: row.left ? enrichEntry(row.left) : undefined,
+  right: row.right ? enrichEntry(row.right) : undefined,
+  staggerRight: row.staggerRight ?? false,
+}))
 ---
 
-<ol class="relative mt-16 experience-list">
-  {
-    processedExperiences.map((experience, index) => (
-      <li class="experience-list-item" style={`animation-delay: ${index * 0.15}s`}>
-        <ExperienceItem {...experience} />
-      </li>
-    ))
-  }
-</ol>
+<!-- Center-Spine Career Tree (Desktop 2-lane tree, Mobile left-spine timeline) -->
+<div class="relative mt-10">
+  <!-- Continuous Center Vertical Trunk (Desktop) -->
+  <div
+    class="hidden lg:block absolute top-7 bottom-7 left-1/2 -translate-x-1/2 w-[2px] bg-amber-200 dark:bg-amber-900/50 pointer-events-none"
+    aria-hidden="true"
+  />
 
-<style>
-  .experience-list-item {
-    opacity: 0;
-    animation: fadeInItem 0.6s ease-out forwards;
-  }
+  <!-- Top "Present" anchor -->
+  <div class="relative z-10 flex lg:justify-center mb-8 pl-5 lg:pl-0">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/70 shadow-sm">
+      <span class="relative flex h-2 w-2">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      </span>
+      Present · {presentLabel}
+    </div>
+  </div>
 
-  @keyframes fadeInItem {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-</style>
+  <!-- Mobile left vertical spine -->
+  <div class="relative pl-6 ml-3 border-l-2 border-amber-200 dark:border-amber-900/50 lg:border-l-0 lg:pl-0 lg:ml-0 space-y-8 lg:space-y-10">
+    {enrichedRows.map((row) => (
+      <div class="relative grid grid-cols-1 lg:grid-cols-[1fr_48px_1fr] gap-y-8 lg:gap-y-0 items-start">
+        <!-- Left Lane -->
+        <div class="relative">
+          {row.left && <ExperienceItem {...row.left} side="left" />}
+        </div>
+
+        <!-- Center Trunk Spacer (Desktop) -->
+        <div class="hidden lg:block" aria-hidden="true" />
+
+        <!-- Right Lane (Parallel concurrent roles) -->
+        <div class:list={["relative", row.staggerRight ? "lg:mt-14" : ""]}>
+          {row.right && <ExperienceItem {...row.right} side="right" />}
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <!-- Bottom Origin Anchor -->
+  <div class="relative z-10 hidden lg:flex justify-center mt-8">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-medium text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/60 shadow-sm">
+      <span class="w-1.5 h-1.5 rounded-full bg-amber-500" />
+      Started Sept. 2024
+    </div>
+  </div>
+</div>
