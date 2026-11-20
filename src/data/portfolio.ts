@@ -511,7 +511,7 @@ export const PUBLICATION_ITEMS: PublicationEntry[] = [
     venue:
       "21st Conference of the Spanish Association for Artificial Intelligence (CAEPIA 2026)",
     venueShort: "CAEPIA 2026",
-    pages: "p. 1083",
+    pages: "p. 1042",
     authors: [
       "Rodrigo Carreira Villalta",
       "Antonio Jesús Nebro Urbaneja",
