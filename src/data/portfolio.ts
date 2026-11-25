@@ -54,11 +54,59 @@ export type ProjectTagKey =
   | "HUGGINGFACE"
   | "PANDAS"
 
+export interface ProjectModuleLink {
+  label: string
+  href: string
+  kind: "github" | "docs" | "pypi" | "external"
+}
+
+export interface ProjectEcosystemNode {
+  id: string
+  name: string
+  role: string
+  version: string
+  badge: string
+  description: string
+  accent: "indigo" | "sky" | "emerald" | "violet"
+  icon: "python" | "desktop" | "ai" | "plugin"
+  installHint?: string
+  links: ProjectModuleLink[]
+}
+
+export interface ProjectEvolution {
+  legacy: {
+    version: string
+    date: string
+    status: string
+    title: string
+    subtitle: string
+    description: string
+    image: string
+    links: ProjectModuleLink[]
+  }
+  current: {
+    version: string
+    date: string
+    status: string
+    title: string
+    subtitle: string
+    description: string
+    image: string
+    primaryLinks: ProjectModuleLink[]
+    modules: ProjectEcosystemNode[]
+  }
+}
+
 export interface ProjectEntry {
   id: string
   date: string
   shortLabel: string
   title: string
+  subtitle?: string
+  badge?: string
+  installHint?: string
+  docLabel?: string
+  imageCaption?: string
   shortSummary: string
   description: string
   link: string
@@ -66,6 +114,7 @@ export interface ProjectEntry {
   preview?: string
   image: string
   tagKeys: ProjectTagKey[]
+  evolution?: ProjectEvolution
 }
 
 export interface PublicationEntry {
@@ -468,34 +517,191 @@ export const TECHNICAL_CERTIFICATIONS: CertificationEntry[] = [
 
 export const PROJECT_ITEMS: ProjectEntry[] = [
   {
+    id: "proj-saes",
+    date: "November 2026",
+    shortLabel: "SAES 2.0",
+    title: "SAES — Stochastic Algorithm Evaluation Suite",
+    shortSummary:
+      "Multi-repo statistical evaluation ecosystem (v2.0): PyPI library & FastAPI server, React/Tauri Studio UI, tool-calling AI statistical consultant, and Claude Code agent skills — evolved from SAES v1.0.",
+    description:
+      "Open-source scientific ecosystem for frequentist, exact Bayesian, equivalence (TOST), sensitivity (MDES), and Dolan–Moré meta-benchmark evaluation of stochastic algorithms.",
+    link: "https://saes-suite.github.io/saes/",
+    github: "https://github.com/saes-suite",
+    preview: "https://pypi.org/project/saes/",
+    image: "/projects/saes-v2-logo.svg",
+    tagKeys: ["PYTHON", "NUMPY", "PANDAS", "Next"],
+    evolution: {
+      legacy: {
+        version: "v1.x",
+        date: "September 2024",
+        status: "Deprecated · Legacy",
+        title: "SAES v1.0 (jMetal/SAES)",
+        subtitle: "Original standalone Python library · ITIS UMA",
+        description:
+          "First generation coauthored with Antonio J. Nebro for non-parametric statistical testing (Friedman, Wilcoxon, Nemenyi), boxplots, critical distance diagrams, Pareto fronts, and LaTeX tables. Superseded by the v2.0 ecosystem (legacy scripts can pin SAES<2).",
+        image: "/projects/SAES_logo.png",
+        links: [
+          {
+            label: "Legacy Repo",
+            href: "https://github.com/jMetal/SAES",
+            kind: "github",
+          },
+          {
+            label: "v1 Docs",
+            href: "https://jMetal.github.io/SAES/",
+            kind: "docs",
+          },
+          {
+            label: "PyPI (v1)",
+            href: "https://pypi.org/project/saes/1.5.0/",
+            kind: "pypi",
+          },
+        ],
+      },
+      current: {
+        version: "v2.0.0",
+        date: "November 2026",
+        status: "Active · Ecosystem",
+        title: "SAES 2.0 Ecosystem",
+        subtitle: "API-First Scientific Suite · 4 Coordinated Repositories + Tauri Desktop",
+        description:
+          "Complete architectural evolution into an API-first evaluation platform combining rigorous frequentist & exact Bayesian inference, TOST equivalence, MDES sensitivity audits, 10 publication plotters, and SHA-256 FAIR reproducibility packs — accessible from Python, Web/Desktop UI, an agentic AI consultant, and Claude Code skills.",
+        image: "/projects/saes-v2-logo.svg",
+        primaryLinks: [
+          {
+            label: "GitHub Org",
+            href: "https://github.com/saes-suite",
+            kind: "github",
+          },
+          {
+            label: "Docs",
+            href: "https://saes-suite.github.io/saes/",
+            kind: "docs",
+          },
+          {
+            label: "PyPI",
+            href: "https://pypi.org/project/saes/",
+            kind: "pypi",
+          },
+          {
+            label: "Desktop Executable",
+            href: "https://github.com/saes-suite/saes-bundle/releases",
+            kind: "external",
+          },
+        ],
+        modules: [
+          {
+            id: "saes-core",
+            name: "saes",
+            role: "Core Python Library & FastAPI Server",
+            version: "v2.0.0",
+            badge: "PyPI Package",
+            description:
+              "Assumption-driven frequentist & exact Bayesian tests (Plackett–Luce, Benavoli simplex), 13 multiplicity corrections, TOST/MDES, 10 publication plots, LaTeX/PDF/DOCX tables, and REST API.",
+            accent: "indigo",
+            icon: "python",
+            installHint: "pip install saes",
+            links: [
+              {
+                label: "PyPI",
+                href: "https://pypi.org/project/saes/",
+                kind: "pypi",
+              },
+              {
+                label: "Docs",
+                href: "https://saes-suite.github.io/saes/",
+                kind: "docs",
+              },
+              {
+                label: "GitHub",
+                href: "https://github.com/saes-suite/saes",
+                kind: "github",
+              },
+            ],
+          },
+          {
+            id: "saes-ui",
+            name: "saes-ui + Desktop",
+            role: "Web Workbench & Tauri v2 Desktop App",
+            version: "v0.4.1",
+            badge: "Web & Desktop UI",
+            description:
+              "Thin-client React 18, TypeScript, and Plotly.js workbench for interactive CSV inspection, Post-Hoc Lab, Dolan–Moré profiles, and FAIR exports — also packaged as a native Tauri v2 desktop app & Docker stack.",
+            accent: "sky",
+            icon: "desktop",
+            links: [
+              {
+                label: "saes-ui",
+                href: "https://github.com/saes-suite/saes-ui",
+                kind: "github",
+              },
+              {
+                label: "saes-bundle",
+                href: "https://github.com/saes-suite/saes-bundle",
+                kind: "github",
+              },
+            ],
+          },
+          {
+            id: "saes-ai",
+            name: "saes-ai",
+            role: "Agentic Statistical Consultant & Streaming API",
+            version: "v0.4.1",
+            badge: "AI Consultant",
+            description:
+              "Multi-provider LLM statistical assistant (local Ollama with model management, Anthropic Claude, OpenAI, Gemini) featuring native tool calling over SAES routines and live artifact streaming via FastAPI.",
+            accent: "emerald",
+            icon: "ai",
+            links: [
+              {
+                label: "GitHub",
+                href: "https://github.com/saes-suite/saes-ai",
+                kind: "github",
+              },
+            ],
+          },
+          {
+            id: "saes-plugins",
+            name: "saes-plugins",
+            role: "Claude Code Plugin & Cross-Agent Skills",
+            version: "v1.0.0",
+            badge: "Claude Plugin",
+            description:
+              "Official Claude Code plugin marketplace and SKILL.md suite (API, methodology, reporting) compatible with Claude Code, Antigravity, Cursor, Codex, and Gemini CLI.",
+            accent: "violet",
+            icon: "plugin",
+            installHint: "npx skills add saes-suite/saes-plugins",
+            links: [
+              {
+                label: "GitHub",
+                href: "https://github.com/saes-suite/saes-plugins",
+                kind: "github",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+  {
     id: "proj-nnd",
     date: "September 2025",
     shortLabel: "NND",
-    title: "NND",
+    title: "NND — 3-D MRI Lesion Segmentation",
+    subtitle: "Bachelor’s Thesis · YOLOv11 + nnUNet 3-D Consensus Ensemble",
+    badge: "BSc Thesis · PyPI Package",
+    installHint: "pip install nnd",
+    docLabel: "Thesis PDF",
+    imageCaption: "3-D MRI Multiple Sclerosis Lesion Pipeline",
     shortSummary:
       "Bachelor’s thesis combining YOLOv11 detection and nnUNet 3-D segmentation with consensus ensembling for multiple sclerosis lesion MRI analysis.",
     description:
-      "Segmenting sclerosis lesions on 3‑D MRI volumes is a critical yet time‑consuming step in clinical workflows. This repository contains the open‑source code, experiments and analysis accompanying my bachelor’s thesis, which investigates the synergy between YOLOv11 object detection and nnUNet semantic segmentation, enhanced by a novel 3‑D consensus‑ensemble strategy.",
+      "Segmenting multiple sclerosis lesions on 3-D MRI volumes is a critical yet time-consuming step in clinical workflows. NND packages the open-source code, experiments, and analysis from my bachelor’s thesis, investigating the synergy between YOLOv11 object detection and nnUNet volumetric segmentation enhanced by a novel 3-D consensus-ensemble strategy.",
     link: "https://github.com/rorro6787/NND/blob/main/information/TFG_Rodrigo_Carreira_Villalta.pdf",
     github: "https://github.com/rorro6787/NND",
     preview: "https://pypi.org/project/nnd/",
     image: "/brain.png",
-    tagKeys: ["PYTHON", "NUMPY", "PANDAS", "PYTORCH", "YOLO"],
-  },
-  {
-    id: "proj-saes",
-    date: "September 2024",
-    shortLabel: "SAES",
-    title: "SAES",
-    shortSummary:
-      "Open-source Python library for statistical analysis (Friedman, Wilcoxon, Bayesian plots, Pareto fronts & LaTeX reports) of stochastic algorithms.",
-    description:
-      "SAES is a Python library designed to analyse and compare the performance of stochastic algorithms (e.g. metaheuristics and machine learning techniques) on multiple problems. It includes statistical tests (Friedman, Wilcoxon, Nemenyi), data visualization tools (boxplots, critical distance plots), automatic LaTeX report generation, now with support for multi-objective Pareto front plots in 2D, 3D, parallel coordinates for higher dimensions and Bayesian Posterior Plot.",
-    link: "https://jMetal.github.io/SAES/",
-    github: "https://github.com/jMetal/SAES",
-    preview: "https://pypi.org/project/SAES/",
-    image: "/projects/SAES_logo.png",
-    tagKeys: ["PYTHON", "NUMPY", "PANDAS"],
+    tagKeys: ["PYTHON", "PYTORCH", "YOLO", "NUMPY", "PANDAS"],
   },
 ]
 

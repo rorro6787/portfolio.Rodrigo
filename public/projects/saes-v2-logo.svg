@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#1e1b4b" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="curve1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <linearGradient id="curve2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+  </defs>
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+  <rect width="504" height="504" x="4" y="4" rx="108" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="4" />
+  
+  <!-- Subtle Grid lines -->
+  <line x1="80" y1="380" x2="432" y2="380" stroke="#334155" stroke-width="3" />
+  <line x1="80" y1="300" x2="432" y2="300" stroke="#1e293b" stroke-width="2" stroke-dasharray="4,4" />
+  <line x1="80" y1="220" x2="432" y2="220" stroke="#1e293b" stroke-width="2" stroke-dasharray="4,4" />
+  <line x1="80" y1="140" x2="432" y2="140" stroke="#1e293b" stroke-width="2" stroke-dasharray="4,4" />
+
+  <!-- Bell Curve 1 (Algorithm A) -->
+  <path d="M 80 380 C 140 380, 180 340, 220 180 C 240 100, 260 100, 280 180 C 320 340, 360 380, 432 380" 
+        fill="none" stroke="url(#curve1)" stroke-width="8" stroke-linecap="round" />
+  <path d="M 80 380 C 140 380, 180 340, 220 180 C 240 100, 260 100, 280 180 C 320 340, 360 380, 432 380 Z" 
+        fill="url(#curve1)" opacity="0.15" />
+
+  <!-- Bell Curve 2 (Algorithm B - shifted) -->
+  <path d="M 120 380 C 180 380, 240 360, 280 240 C 310 150, 340 150, 370 260 C 400 350, 420 380, 440 380" 
+        fill="none" stroke="url(#curve2)" stroke-width="6" stroke-dasharray="8,6" stroke-linecap="round" />
+  
+  <!-- SAES Letters / Modern Logo Mark -->
+  <text x="256" y="445" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" 
+        font-size="52" font-weight="800" fill="#f8fafc" text-anchor="middle" letter-spacing="8">SAES</text>
+  <circle cx="250" cy="140" r="8" fill="#38bdf8" />
+  <circle cx="325" cy="190" r="7" fill="#34d399" />
+</svg>

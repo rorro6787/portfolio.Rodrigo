@@ -12,7 +12,7 @@ import {
   toMonthIndex,
 } from "@/data/portfolio"
 
-type LaneKey = "work" | "education" | "outputs" | "certs"
+type LaneKey = "work" | "education" | "publications" | "projects" | "certs"
 type ThemeKind = "work" | "education" | "publication" | "project" | "tech" | "language"
 
 interface SummaryAction {
@@ -232,76 +232,142 @@ const educationBars = [...EDUCATION_ITEMS].reverse().map((edu) => {
   }
 })
 
-// Scientific Publications & Projects milestones
-interface WorkProductMilestone {
+// Scientific Publications & Projects milestones (separate lanes)
+interface TimelineMilestone {
   key: string
-  kind: "publication" | "project"
   date: string
   pct: number
   shortLabel: string
   title: string
 }
 
-const workProductMilestones: WorkProductMilestone[] = [
-  ...PUBLICATION_ITEMS.map((pub) => {
-    const idx = toMonthIndex(parseDate(pub.date))
-    summaryPanels.push({
-      key: pub.id,
-      lane: "outputs",
-      theme: "publication",
-      categoryLabel: "Scientific Publication",
-      dateLabel: `${pub.date} · ${pub.pages}`,
-      metaNote: pub.venueShort,
-      title: pub.title,
-      subtitle: `${pub.venue} — ${pub.authors.join(", ")}`,
-      shortSummary: pub.shortSummary,
-      tags: pub.tags,
-      jumpLabel: "View in Publications",
-      targetId: pub.id,
-      targetSection: "publicaciones",
-      externalActions: [{ label: "Proceedings PDF", href: pub.pdfUrl }],
-    })
-    return {
-      key: pub.id,
-      kind: "publication" as const,
-      date: pub.date,
-      pct: monthToPercent(idx),
-      shortLabel: pub.shortLabel,
-      title: pub.title,
-    }
-  }),
-  ...PROJECT_ITEMS.map((proj) => {
-    const idx = toMonthIndex(parseDate(proj.date))
-    const actions: SummaryAction[] = []
-    if (proj.github) actions.push({ label: "GitHub", href: proj.github })
-    if (proj.preview) actions.push({ label: "PyPI", href: proj.preview })
-    else if (proj.link) actions.push({ label: "Project link", href: proj.link })
+const publicationMilestones: TimelineMilestone[] = PUBLICATION_ITEMS.map((pub) => {
+  const idx = toMonthIndex(parseDate(pub.date))
+  summaryPanels.push({
+    key: pub.id,
+    lane: "publications",
+    theme: "publication",
+    categoryLabel: "Scientific Publication",
+    dateLabel: `${pub.date} · ${pub.pages}`,
+    metaNote: pub.venueShort,
+    title: pub.title,
+    subtitle: `${pub.venue} — ${pub.authors.join(", ")}`,
+    shortSummary: pub.shortSummary,
+    tags: pub.tags,
+    jumpLabel: "View in Publications",
+    targetId: pub.id,
+    targetSection: "publicaciones",
+    externalActions: [{ label: "Proceedings PDF", href: pub.pdfUrl }],
+  })
+  return {
+    key: pub.id,
+    date: pub.date,
+    pct: monthToPercent(idx),
+    shortLabel: pub.shortLabel,
+    title: pub.title,
+  }
+}).sort((a, b) => a.pct - b.pct)
+
+const projectMilestones: TimelineMilestone[] = PROJECT_ITEMS.flatMap((proj) => {
+  const milestones: TimelineMilestone[] = []
+
+  if (proj.evolution) {
+    const { legacy, current } = proj.evolution
+    const legacyIdx = toMonthIndex(parseDate(legacy.date))
+    const legacyKey = `${proj.id}-v1`
 
     summaryPanels.push({
-      key: proj.id,
-      lane: "outputs",
+      key: legacyKey,
+      lane: "projects",
       theme: "project",
-      categoryLabel: "Project",
-      dateLabel: proj.date,
-      title: proj.title,
-      subtitle: "Open-source Research & Software Project",
-      shortSummary: proj.shortSummary,
-      tags: proj.tagKeys,
-      jumpLabel: "View in Projects",
+      categoryLabel: "Project · Legacy",
+      dateLabel: legacy.date,
+      metaNote: legacy.status,
+      title: legacy.title,
+      subtitle: legacy.subtitle,
+      shortSummary: legacy.description,
+      tags: ["Python", "NumPy", "Pandas", "Deprecated"],
+      jumpLabel: "View Evolution Tree",
       targetId: proj.id,
       targetSection: "proyectos",
-      externalActions: actions,
+      externalActions: legacy.links.map((l) => ({
+        label: l.label,
+        href: l.href,
+      })),
     })
-    return {
+
+    milestones.push({
+      key: legacyKey,
+      date: legacy.date,
+      pct: monthToPercent(legacyIdx),
+      shortLabel: "SAES v1.0",
+      title: legacy.title,
+    })
+
+    const currentIdx = toMonthIndex(parseDate(current.date))
+    summaryPanels.push({
       key: proj.id,
-      kind: "project" as const,
-      date: proj.date,
-      pct: monthToPercent(idx),
+      lane: "projects",
+      theme: "project",
+      categoryLabel: "Project · Ecosystem",
+      dateLabel: current.date,
+      metaNote: current.version,
+      title: current.title,
+      subtitle: current.subtitle,
+      shortSummary: proj.shortSummary,
+      tags: ["PyPI", "FastAPI", "React / Tauri", "AI Agent", "Claude Plugin"],
+      jumpLabel: "Explore SAES 2.0 Tree",
+      targetId: proj.id,
+      targetSection: "proyectos",
+      externalActions: current.primaryLinks.slice(0, 3).map((l) => ({
+        label: l.label,
+        href: l.href,
+      })),
+    })
+
+    milestones.push({
+      key: proj.id,
+      date: current.date,
+      pct: monthToPercent(currentIdx),
       shortLabel: proj.shortLabel,
-      title: proj.title,
-    }
-  }),
-].sort((a, b) => a.pct - b.pct)
+      title: current.title,
+    })
+
+    return milestones
+  }
+
+  const idx = toMonthIndex(parseDate(proj.date))
+  const actions: SummaryAction[] = []
+  if (proj.github) actions.push({ label: "GitHub", href: proj.github })
+  if (proj.preview) actions.push({ label: "PyPI", href: proj.preview })
+  else if (proj.link) actions.push({ label: "Project link", href: proj.link })
+
+  summaryPanels.push({
+    key: proj.id,
+    lane: "projects",
+    theme: "project",
+    categoryLabel: "Project",
+    dateLabel: proj.date,
+    title: proj.title,
+    subtitle: proj.subtitle ?? "Open-source Research & Software Project",
+    shortSummary: proj.shortSummary,
+    tags: proj.tagKeys,
+    jumpLabel: "View in Projects",
+    targetId: proj.id,
+    targetSection: "proyectos",
+    externalActions: actions,
+  })
+
+  milestones.push({
+    key: proj.id,
+    date: proj.date,
+    pct: monthToPercent(idx),
+    shortLabel: proj.shortLabel,
+    title: proj.title,
+  })
+
+  return milestones
+}).sort((a, b) => a.pct - b.pct)
 
 // Certifications & Language milestones clustered by month + kind
 interface CertMilestone {
@@ -493,10 +559,17 @@ const totalCerts = TECHNICAL_CERTIFICATIONS.length + LANGUAGE_CERTIFICATIONS.len
       </button>
       <button
         type="button"
-        data-filter="outputs"
+        data-filter="publications"
         class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
       >
-        Pubs & Projects
+        Publications
+      </button>
+      <button
+        type="button"
+        data-filter="projects"
+        class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all"
+      >
+        Projects
       </button>
       <button
         type="button"
@@ -622,14 +695,14 @@ const totalCerts = TECHNICAL_CERTIFICATIONS.length + LANGUAGE_CERTIFICATIONS.len
           </div>
         </div>
 
-        <!-- LANE GROUP 3: PUBLICATIONS & PROJECTS -->
-        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="outputs">
+        <!-- LANE GROUP 3: SCIENTIFIC PUBLICATIONS -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="publications">
           <div class="flex items-center gap-2 text-xs font-semibold text-rose-700 dark:text-rose-400">
             <span class="w-2 h-2 rounded-full bg-rose-500 flex-shrink-0" />
-            <span>Pubs & Projects</span>
+            <span>Publications</span>
           </div>
           <div class="relative h-9 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60">
-            {workProductMilestones.map((item) => (
+            {publicationMilestones.map((item) => (
               <button
                 type="button"
                 data-timeline-trigger
@@ -638,11 +711,34 @@ const totalCerts = TECHNICAL_CERTIFICATIONS.length + LANGUAGE_CERTIFICATIONS.len
                 title={`${item.title} (${item.date})`}
                 style={`left: ${item.pct}%;`}
                 class:list={[
-                  "timeline-trigger absolute top-1.5 bottom-1.5 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] font-semibold transition-all duration-150 hover:scale-105 focus:scale-105 cursor-pointer shadow-sm whitespace-nowrap",
+                  "timeline-trigger absolute top-1.5 bottom-1.5 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] font-semibold transition-all duration-150 hover:scale-105 focus:scale-105 cursor-pointer shadow-sm whitespace-nowrap bg-rose-600 text-white dark:bg-rose-500",
                   item.pct > 88 ? "-translate-x-3/4" : "-translate-x-1/2",
-                  item.kind === "publication"
-                    ? "bg-rose-600 text-white dark:bg-rose-500"
-                    : "bg-indigo-600 text-white dark:bg-indigo-500",
+                ]}
+              >
+                <span>{item.shortLabel}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <!-- LANE GROUP 4: PROJECTS -->
+        <div class="grid grid-cols-[120px_1fr] gap-4 items-center" data-lane-group="projects">
+          <div class="flex items-center gap-2 text-xs font-semibold text-indigo-700 dark:text-indigo-400">
+            <span class="w-2 h-2 rounded-full bg-indigo-500 flex-shrink-0" />
+            <span>Projects</span>
+          </div>
+          <div class="relative h-9 w-full rounded-lg bg-zinc-100 dark:bg-zinc-800/60">
+            {projectMilestones.map((item) => (
+              <button
+                type="button"
+                data-timeline-trigger
+                data-detail-key={item.key}
+                aria-expanded="false"
+                title={`${item.title} (${item.date})`}
+                style={`left: ${item.pct}%;`}
+                class:list={[
+                  "timeline-trigger absolute top-1.5 bottom-1.5 px-2.5 rounded-full flex items-center gap-1.5 text-[11px] font-semibold transition-all duration-150 hover:scale-105 focus:scale-105 cursor-pointer shadow-sm whitespace-nowrap bg-indigo-600 text-white dark:bg-indigo-500",
+                  item.pct > 88 ? "-translate-x-3/4" : "-translate-x-1/2",
                 ]}
               >
                 <span>{item.shortLabel}</span>
